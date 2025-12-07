@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configurações</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+      background: #f8f8f8;
+      font-family: "Inter", sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: 800;
+    }
+
+    .card {
+      background: white;
+      padding: 18px;
+      border-radius: 14px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      cursor: pointer;
+      font-size: 17px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .danger {
+      color: #ff3b30;
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Configurações</h1>
+
+  <div class="card" onclick="editar()">
+    Editar Perfil
+    <span>✏️</span>
+  </div>
+
+  <div class="card" onclick="reiniciar()">
+    Reiniciar Desafio
+    <span>🔄</span>
+  </div>
+
+  <div class="card" onclick="premium()">
+    Ativar Premium
+    <span>💎</span>
+  </div>
+
+  <div class="card" onclick="suporte()">
+    Suporte
+    <span>📨</span>
+  </div>
+
+  <div class="card danger" onclick="logout()">
+    Sair da Conta
+    <span>🚪</span>
+  </div>
+
+  <button onclick="goTo('home')" class="btn-voltar">Voltar</button>
+
+  <script type="module">
+    import { loadDB, saveDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    window.editar = function () {
+      goTo("cadastro");
+    };
+
+    window.reiniciar = function () {
+      const db = loadDB();
+      db.day = 1;
+      saveDB(db);
+      alert("Seu desafio foi reiniciado!");
+    };
+
+    window.premium = function () {
+      goTo("premium");
+    };
+
+    window.suporte = function () {
+      alert("Em breve: canal direto com suporte 😎");
+    };
+
+    window.logout = function () {
+      localStorage.removeItem("db_lasy");
+      goTo("login");
+    };
+  </script>
+
+</body>
+
+</html>
