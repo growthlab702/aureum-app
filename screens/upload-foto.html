@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload de Foto</title>
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+      margin: 20px 0;
+    }
+
+    #preview {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: none;
+      margin: 20px auto;
+      border: 2px solid #999;
+    }
+
+    .btn {
+      padding: 12px 22px;
+      background: #0a66ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Envie uma Foto Sua</h1>
+
+  <input id="arquivo" type="file" accept="image/*" onchange="mostrarPreview(event)">
+  <img id="preview">
+
+  <button class="btn" onclick="salvarFoto()">Continuar</button>
+
+  <script type="module">
+    import { saveUpload } from "../upload.js";
+    import { goTo } from "../navigation.js";
+
+    window.mostrarPreview = function (event) {
+      const arquivo = event.target.files[0];
+      if (!arquivo) return;
+
+      const url = URL.createObjectURL(arquivo);
+      preview.src = url;
+      preview.style.display = "block";
+    };
+
+    window.salvarFoto = function () {
+      const file = arquivo.files[0];
+
+      if (!file) {
+        alert("Selecione uma foto!");
+        return;
+      }
+
+      const result = saveUpload("user", file);
