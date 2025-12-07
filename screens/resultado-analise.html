@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resultado da Análise</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .box {
+      background: #f4f4f4;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+
+    .score {
+      font-size: 45px;
+      font-weight: bold;
+      text-align: center;
+      color: #0a66ff;
+    }
+
+    .section-title {
+      margin-top: 15px;
+      margin-bottom: 8px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .item {
+      background: white;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+    }
+
+    .premium {
+      border: 1px solid #ffb800;
+    }
+
+    .premiumTag {
+      color: #d9534f;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .btn-big {
+      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 18px;
+      margin-top: 20px;
+      background: #0a66ff;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Resultado da Análise</h1>
+
+  <div class="box">
+    <div class="score" id="score">--</div>
+    <p style="text-align:center; margin-top:5px;">Nota de harmonia facial</p>
+  </div>
+
+  <div class="box">
+    <div class="section-title">Pontos Fortes</div>
+    <div id="pontosFortes"></div>
+
+    <div class="section-title">Pontos a Melhorar</div>
+    <div id="pontosFracos"></div>
+
+    <div class="section-title">Recomendações</div>
+    <div id="recomendacoes"></div>
+  </div>
+
+  <button class="btn-big" onclick="goTo('biblioteca')">Acessar Biblioteca</button>
+  <button class="btn-voltar" onclick="goTo('home')">Voltar</button>
+
+  <script type="module">
+    import { loadDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    function init() {
+      const db = loadDB();
+
+      // Caso não tenha análise salva ainda
+      if (!db.analise) {
+        db.analise = {
+          score: 82,
+          fortes: ["Simetria boa", "Ângulos bem definidos"],
+          fracos: ["Textura irregular na pele", "Olheiras leves"],
+          recomendacoes: [
+            { texto: "Hidratação profunda de pele", premium: false },
+            { texto: "Tratamento de colágeno", premium: true },
+            { texto: "Protocolo anti-oleosidade", premium: false },
+            { texto: "Harmonização digital (Premium)", premium: true }
+          ]
+        };
+        localStorage.setItem("db_lasy", JSON.stringify(db));
+      }
+
+      document.getElementById("score").innerText = db.analise.score;
+
+      const fortes = document.getElementById("pontosFortes");
+      const fracos = document.getElementById("pontosFracos");
+      const recom = document.getElementById("recomendacoes");
+
+      db.analise.fortes.forEach(f =>
+        fortes.innerHTML += `<div class="item">${f}</div>`
+      );
+
+      db.analise.fracos.forEach(f =>
+        fracos.innerHTML += `<div class="item">${f}</div>`
+      );
+
+      db.analise.recomendacoes.forEach(r => {
+        recom.innerHTML += `
+          <div class="item ${r.premium ? "premium" : ""}">
+            ${r.texto}
+            ${r.premium ? '<div class="premiumTag">Premium</div>' : ""}
+          </div>
+        `;
+      });
+    }
+
+    init();
+  </script>
+
+</body>
+
+</html>
