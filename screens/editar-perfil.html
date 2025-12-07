@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editar Perfil</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .input-block {
+      margin-bottom: 18px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    .btn-big {
+      width: 100%;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Editar Perfil</h1>
+
+  <div class="input-block">
+    <label>Nome</label>
+    <input id="nomeInput" type="text" placeholder="Seu nome">
+  </div>
+
+  <div class="input-block">
+    <label>Idade</label>
+    <input id="idadeInput" type="number" placeholder="Sua idade">
+  </div>
+
+  <div class="input-block">
+    <label>Email</label>
+    <input id="emailInput" type="email" placeholder="Seu email">
+  </div>
+
+  <div class="input-block">
+    <label>Gênero</label>
+    <select id="generoInput">
+      <option value="">Selecione</option>
+      <option value="Masculino">Masculino</option>
+      <option value="Feminino">Feminino</option>
+      <option value="Outro">Outro</option>
+    </select>
+  </div>
+
+  <div class="input-block">
+    <label>Objetivo</label>
+    <select id="objetivoInput">
+      <option value="">Selecione</option>
+      <option value="Melhorar aparência">Melhorar aparência</option>
+      <option value="Autocuidado diário">Autocuidado diário</option>
+      <option value="Transformação 30 dias">Transformação 30 dias</option>
+      <option value="Confiança e autoestima">Confiança e autoestima</option>
+    </select>
+  </div>
+
+  <button id="btnSalvar" class="btn-big">Salvar</button>
+  <button onclick="goTo('perfil')" class="btn-voltar">Voltar</button>
+
+  <script type="module">
+    import { loadDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    const nomeInput = document.getElementById("nomeInput");
+    const idadeInput = document.getElementById("idadeInput");
+    const emailInput = document.getElementById("emailInput");
+    const generoInput = document.getElementById("generoInput");
+    const objetivoInput = document.getElementById("objetivoInput");
+    const btnSalvar = document.getElementById("btnSalvar");
+
+    function init() {
+      const db = loadDB();
+
+      nomeInput.value = db.nome || "";
+      idadeInput.value = db.idade || "";
+      emailInput.value = db.email || "";
+      generoInput.value = db.genero || "";
+      objetivoInput.value = db.objetivo || "";
+    }
+
+    btnSalvar.onclick = () => {
+      const db = loadDB();
+
+      db.nome = nomeInput.value.trim();
+      db.idade = idadeInput.value.trim();
+      db.email = emailInput.value.trim();
+      db.genero = generoInput.value.trim();
+      db.objetivo = objetivoInput.value.trim();
+
+      localStorage.setItem("db_lasy", JSON.stringify(db));
+
+      goTo("perfil");
+    };
+
+    init();
+  </script>
+
+</body>
+
+</html>
