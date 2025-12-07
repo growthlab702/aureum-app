@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Definir Metas</title>
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .meta-box {
+      width: 90%;
+      max-width: 350px;
+      margin: 15px auto;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      text-align: left;
+    }
+
+    .btn {
+      padding: 14px 26px;
+      background: #0a66ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Quais são suas metas?</h1>
+
+  <div class="meta-box">
+    <label><input type="checkbox" class="meta" value="Perder Peso"> Perder Peso</label>
+  </div>
+
+  <div class="meta-box">
+    <label><input type="checkbox" class="meta" value="Ganhar Massa"> Ganhar Massa</label>
+  </div>
+
+  <div class="meta-box">
+    <label><input type="checkbox" class="meta" value="Definição"> Definição</label>
+  </div>
+
+  <div class="meta-box">
+    <label><input type="checkbox" class="meta" value="Saúde e Bem-estar"> Saúde e Bem-estar</label>
+  </div>
+
+  <button class="btn" onclick="continuar()">Continuar</button>
+
+  <script type="module">
+    import { saveDB, loadDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+
+    window.continuar = function () {
+      const metas = [...document.querySelectorAll(".meta:checked")].map(m => m.value);
+
+      if (metas.length === 0) {
+        alert("Selecione ao menos uma meta!");
+        return;
+      }
+
+      const db = loadDB();
+      db.metas = metas;
+      saveDB(db);
+
+      goTo("cadastro-final");
+    };
+  </script>
+
+</body>
+</html>
