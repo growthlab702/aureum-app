@@ -1,96 +1,126 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home</title>
+
   <link rel="stylesheet" href="../style.css">
 
   <style>
     body {
-      text-align: center;
       padding: 25px;
+      background: linear-gradient(180deg, #ffffff 0%, #f4f4f4 100%);
+      font-family: "Inter", sans-serif;
     }
 
-    h1 {
-      margin-bottom: 18px;
+    .header {
+      margin-bottom: 25px;
     }
 
-    .foto-user {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin: 15px auto;
-      border: 3px solid #0a66ff;
+    .title {
+      font-size: 26px;
+      font-weight: 800;
     }
 
-    .foto-user img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .username {
+      font-size: 18px;
+      color: #555;
+      margin-top: 5px;
     }
 
-    .box {
-      background: #f3f3f3;
-      margin: 18px auto;
+    .card {
+      background: white;
       padding: 20px;
-      border-radius: 12px;
-      width: 85%;
-      max-width: 380px;
-      text-align: left;
+      border-radius: 18px;
+      box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: .2s;
     }
 
-    .btn {
-      padding: 14px 26px;
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    .card-title {
+      font-size: 19px;
+      font-weight: bold;
+    }
+
+    .card-desc {
+      color: #555;
+      font-size: 15px;
+      margin-top: 5px;
+    }
+
+    .premium-banner {
+      margin-top: 30px;
       background: #0a66ff;
+      padding: 18px;
+      border-radius: 14px;
       color: white;
-      border: none;
-      border-radius: 8px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
       cursor: pointer;
-      margin-top: 20px;
-      font-size: 16px;
-      width: 90%;
-      max-width: 300px;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Bem-vindo!</h1>
-
-  <div class="foto-user" id="ftUser">
-    <img src="../assets/user-default.png">
+  <div class="header">
+    <div class="title">Seu Painel</div>
+    <div class="username" id="usernameText">Carregando...</div>
   </div>
 
-  <h2 id="nomeUser">Carregando...</h2>
-
-  <div class="box">
-    <h3>Status da sua Jornada</h3>
-    <p id="statusProgresso">Carregando...</p>
+  <div class="card" onclick="goTo('analise')">
+    <div class="card-title">Análise Facial</div>
+    <div class="card-desc">Envie sua foto e receba um relatório completo e personalizado.</div>
   </div>
 
-  <button class="btn" onclick="goTo('analise')">Fazer Análise Facial</button>
-  <button class="btn" onclick="goTo('biblioteca')">Biblioteca Estética</button>
-  <button class="btn" onclick="goTo('chat')">Chat IA</button>
+  <div class="card" onclick="goTo('biblioteca')">
+    <div class="card-title">Biblioteca Estética</div>
+    <div class="card-desc">Materiais gratuitos e premium para sua evolução visual.</div>
+  </div>
+
+  <div class="card" onclick="goTo('transformacao')">
+    <div class="card-title">Transformação 30 Dias</div>
+    <div class="card-desc">Um programa guiado para mudar seu visual em 30 dias.</div>
+  </div>
+
+  <div class="card" onclick="goTo('chat')">
+    <div class="card-title">Chat Inteligente</div>
+    <div class="card-desc">Dúvidas? Pergunte ao seu consultor estético 24h.</div>
+  </div>
+
+  <div id="premiumBanner" class="premium-banner" onclick="goTo('premium')">
+    Desbloquear Premium 🔓
+  </div>
 
   <script type="module">
     import { loadDB } from "../database.js";
     import { goTo } from "../navigation.js";
 
-    const db = loadDB();
-
-    const nomeUser = db.nome || "Usuário";
-    const fotoUser = db.foto || "../assets/user-default.png";
-    const progresso = db.progresso || 0;
-
-    document.getElementById("nomeUser").innerText = nomeUser;
-    document.getElementById("ftUser").innerHTML = `<img src="${fotoUser}">`;
-    document.getElementById("statusProgresso").innerText = `Você está no dia ${progresso} do programa.`;
-
     window.goTo = goTo;
+
+    function render() {
+      const db = loadDB();
+
+      document.getElementById("usernameText").innerText = `Olá, ${db.nome || "Usuário"}`;
+
+      const banner = document.getElementById("premiumBanner");
+
+      if (db.premium) {
+        banner.style.display = "none";
+      }
+    }
+
+    render();
   </script>
 
 </body>
+
 </html>
