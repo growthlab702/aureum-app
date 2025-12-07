@@ -18,33 +18,27 @@
       margin-bottom: 20px;
     }
 
-    .config-item {
-      background: #f5f5f5;
-      padding: 15px;
-      border-radius: 12px;
+    .btn {
+      width: 100%;
+      padding: 14px;
       margin-bottom: 15px;
+      background: #0a66ff;
+      border-radius: 10px;
+      border: none;
+      color: #fff;
       cursor: pointer;
       font-size: 16px;
-      transition: 0.2s;
     }
 
-    .config-item:hover {
-      background: #ececec;
+    .btn.logout {
+      background: #d9534f;
     }
 
-    .danger {
-      background: #ffdddd;
-    }
-
-    .danger:hover {
-      background: #ffcccc;
-    }
-
-    .version {
-      margin-top: 30px;
-      text-align: center;
-      opacity: 0.6;
-      font-size: 14px;
+    .info {
+      background: #f4f4f4;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
     }
   </style>
 </head>
@@ -53,80 +47,39 @@
 
   <h1>Configurações</h1>
 
-  <div class="config-item" onclick="toggleTema()">
-    Alternar tema (Claro / Escuro)
+  <div class="info">
+    <p><strong>Nome:</strong> <span id="userName"></span></p>
+    <p><strong>Status:</strong> <span id="userStatus"></span></p>
   </div>
 
-  <div class="config-item" onclick="resetProgresso()">
-    Resetar progresso
-  </div>
+  <button class="btn" onclick="goTo('premium')">Gerenciar Assinatura</button>
+  <button class="btn logout" onclick="logout()">Sair</button>
 
-  <div class="config-item danger" onclick="apagarConta()">
-    Apagar conta / dados
-  </div>
-
-  <div class="config-item" onclick="abrirSuporte()">
-    Suporte
-  </div>
-
-  <button class="btn-voltar" onclick="goTo('home')">Voltar</button>
-
-  <p class="version">Versão 1.0.0</p>
+  <button class="btn" onclick="goTo('home')">Voltar</button>
 
   <script type="module">
-    import { loadDB, createEmptyDB } from "../database.js";
+    import { loadDB, saveDB } from "../database.js";
     import { goTo } from "../navigation.js";
 
     window.goTo = goTo;
 
-    // Tema (claro/escuro)
-    window.toggleTema = () => {
-      const atual = document.body.classList.contains("dark");
-      if (atual) {
-        document.body.classList.remove("dark");
-        localStorage.setItem("theme_lasy", "light");
-      } else {
-        document.body.classList.add("dark");
-        localStorage.setItem("theme_lasy", "dark");
-      }
-    };
+    const nameField = document.getElementById("userName");
+    const statusField = document.getElementById("userStatus");
 
-    // Aplicar tema salvo
-    const temaSalvo = localStorage.getItem("theme_lasy");
-    if (temaSalvo === "dark") {
-      document.body.classList.add("dark");
-    }
-
-    // Resetar progresso
-    window.resetProgresso = () => {
-      if (!confirm("Tem certeza que deseja resetar seu progresso?")) return;
-
+    function render() {
       const db = loadDB();
 
-      // Zera apenas progresso, não apaga os dados pessoais
-      db.diario = [];
-      db.tarefas = {};
-      db.materialAtual = null;
+      nameField.textContent = db.user?.nome || "Usuário";
+      statusField.textContent = db.premium ? "Premium Ativo" : "Gratuito";
+    }
 
-      localStorage.setItem("db_lasy", JSON.stringify(db));
-
-      alert("Progresso resetado!");
+    window.logout = function () {
+      localStorage.removeItem("db_lasy");
+      alert("Sessão encerrada!");
+      goTo("login");
     };
 
-    // Apagar conta completa
-    window.apagarConta = () => {
-      if (!confirm("⚠ Isso irá apagar TODOS os dados do app. Continuar?")) return;
-
-      const novoDB = createEmptyDB();
-      localStorage.setItem("db_lasy", JSON.stringify(novoDB));
-
-      alert("Conta apagada.");
-      goTo("onboarding");
-    };
-
-    window.abrirSuporte = () => {
-      window.open("https://wa.me/5599999999999", "_blank");
-    };
+    render();
   </script>
 
 </body>
