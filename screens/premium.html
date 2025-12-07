@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Premium</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+      font-family: "Inter", sans-serif;
+      background: linear-gradient(180deg, #0a66ff 0%, #003d99 100%);
+      color: white;
+    }
+
+    .title {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      margin-bottom: 25px;
+      opacity: 0.9;
+      text-align: center;
+    }
+
+    .benefit {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+      backdrop-filter: blur(6px);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: #ffffff;
+      color: #0a66ff;
+      border: none;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 25px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.03);
+    }
+
+    .back {
+      text-align: center;
+      margin-top: 18px;
+      opacity: 0.8;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="title">Acesso Premium</div>
+  <div class="subtitle">Desbloqueie todo seu potencial estético</div>
+
+  <div class="benefit">🔥 Acesso total à Biblioteca Premium</div>
+  <div class="benefit">📘 Guias avançados de Estética Masculina</div>
+  <div class="benefit">🤖 Chat Consultor ilimitado</div>
+  <div class="benefit">🧬 Análises faciais completas</div>
+  <div class="benefit">⚡ Atualizações futuras garantidas</div>
+
+  <button class="btn" onclick="comprarPremium()">Desbloquear Premium</button>
+
+  <div class="back" onclick="goTo('home')">Voltar</div>
+
+  <script type="module">
+    import { loadDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    function comprarPremium() {
+      const db = loadDB();
+      db.premium = true;
+
+      localStorage.setItem("db_lasy", JSON.stringify(db));
+
+      alert("Premium desbloqueado com sucesso!");
+
+      goTo("home");
+    }
+  </script>
+
+</body>
+
+</html>
