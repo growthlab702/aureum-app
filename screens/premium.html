@@ -4,102 +4,156 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Premium</title>
+  <title>Assinatura Premium</title>
 
   <link rel="stylesheet" href="../style.css">
 
   <style>
     body {
       padding: 25px;
-      background: #fafafa;
-      font-family: "Inter", sans-serif;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 12px;
-      font-size: 28px;
-      font-weight: 900;
+      margin-bottom: 10px;
     }
 
-    p {
+    .sub-title {
       text-align: center;
+      font-size: 15px;
+      opacity: 0.7;
       margin-bottom: 25px;
-      font-size: 16px;
-      opacity: .8;
     }
 
-    .card {
-      background: white;
-      padding: 20px;
+    .planos {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .plano {
+      background: #ffffff;
       border-radius: 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
+      padding: 20px;
+      border: 2px solid #e6e6e6;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .plano:hover {
+      transform: scale(1.02);
+      border-color: #0a66ff;
+    }
+
+    .plano.recomendado {
+      border-color: #0a66ff;
+      box-shadow: 0px 0px 8px rgba(10, 102, 255, 0.25);
+    }
+
+    .tag-reco {
+      background: #0a66ff;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    .plano-titulo {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .plano-preco {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 6px 0;
+    }
+
+    .plano-descricao {
+      opacity: 0.75;
+      font-size: 14px;
+    }
+
+    .beneficios {
+      margin-top: 20px;
     }
 
     .beneficio {
-      margin: 10px 0;
-      font-size: 16px;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .btn-premium {
-      width: 100%;
-      padding: 15px;
-      font-size: 18px;
-      background: #ffb800;
-      border: none;
-      border-radius: 10px;
-      font-weight: 800;
-      cursor: pointer;
+    .beneficio span {
+      font-size: 14px;
     }
 
     .btn-voltar {
-      margin-top: 20px;
+      margin-top: 30px;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Premium</h1>
-  <p>Desbloqueie sua transformação completa</p>
+  <h1>Desbloqueie o Premium</h1>
+  <div class="sub-title">Transformação estética real começa aqui</div>
 
-  <div class="card">
-    <h2 style="text-align:center; margin-bottom:15px;">O que você ganha:</h2>
+  <div class="planos">
 
-    <div class="beneficio">💎 Acesso total à Biblioteca Premium</div>
-    <div class="beneficio">💎 Análise Facial Avançada + IA completa</div>
-    <div class="beneficio">💎 Simulações AR exclusivas</div>
-    <div class="beneficio">💎 Rotinas personalizadas liberadas</div>
-    <div class="beneficio">💎 Conteúdos secretos: estilo, grooming, estética</div>
-    <div class="beneficio">💎 Desafio de 30 Dias completo</div>
-    <div class="beneficio">💎 Suporte direto</div>
+    <!-- PLANO MENSAL -->
+    <div class="plano" onclick="assinar('mensal')">
+      <div class="plano-titulo">Plano Mensal</div>
+      <div class="plano-preco">R$ 29,90/mês</div>
+      <div class="plano-descricao">Acesso total, sem limitações.</div>
 
-    <br>
+      <div class="beneficios">
+        <div class="beneficio">✔ <span>Análises faciais avançadas</span></div>
+        <div class="beneficio">✔ <span>Biblioteca Premium completa</span></div>
+        <div class="beneficio">✔ <span>Simulações estéticas</span></div>
+        <div class="beneficio">✔ <span>Modo Transformação 30 Dias</span></div>
+      </div>
+    </div>
 
-    <button class="btn-premium" onclick="ativarPremium()">Ativar Premium</button>
+    <!-- PLANO ANUAL -->
+    <div class="plano recomendado" onclick="assinar('anual')">
+      <div class="tag-reco">MAIS ESCOLHIDO</div>
+      <div class="plano-titulo">Plano Anual</div>
+      <div class="plano-preco">R$ 199/ano</div>
+      <div class="plano-descricao">7 meses de economia. Transformação real.</div>
+
+      <div class="beneficios">
+        <div class="beneficio">✨ <span>Acesso vitalício enquanto durar o plano</span></div>
+        <div class="beneficio">✨ <span>Atualizações exclusivas</span></div>
+        <div class="beneficio">✨ <span>Materiais secretos liberados</span></div>
+      </div>
+    </div>
+
   </div>
 
-  <button onclick="goTo('settings')" class="btn-voltar">Voltar</button>
+  <button onclick="goTo('home')" class="btn-voltar">Voltar</button>
 
   <script type="module">
     import { loadDB, saveDB } from "../database.js";
     import { goTo } from "../navigation.js";
 
-    window.goTo = goTo;
-
-    window.ativarPremium = function () {
-      const confirmar = confirm("Confirmar ativação premium?");
-
-      if (!confirmar) return;
-
+    window.assinar = function (tipo) {
       const db = loadDB();
+
       db.premium = true;
+      db.tipoPlano = tipo;
+      db.dataAtivacao = new Date().toISOString();
+
       saveDB(db);
 
       alert("Premium ativado com sucesso!");
       goTo("home");
     };
+
+    window.goTo = goTo;
   </script>
 
 </body>
