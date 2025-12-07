@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Meu Perfil</title>
 
   <link rel="stylesheet" href="../style.css">
@@ -11,56 +11,55 @@
   <style>
     body {
       padding: 25px;
+      font-family: "Inter", sans-serif;
+      background: #f7f7f7;
+      color: #1a1a1a;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
+      font-size: 26px;
+      font-weight: 800;
     }
 
-    .perfil-box {
-      background: #f4f4f4;
+    .card {
+      background: white;
       padding: 20px;
-      border-radius: 12px;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       margin-bottom: 20px;
     }
 
-    input,
-    select {
-      width: 100%;
-      padding: 12px;
-      margin-top: 8px;
-      margin-bottom: 18px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
       font-size: 16px;
     }
 
-    .foto-preview {
-      width: 140px;
-      height: 140px;
-      border-radius: 70px;
-      background: #ddd;
-      margin: 0 auto;
-      background-size: cover;
-      background-position: center;
+    .label {
+      opacity: 0.7;
     }
 
-    .btn-main {
-      width: 100%;
-      padding: 14px;
+    .premium-badge {
       background: #0a66ff;
-      border: none;
       color: white;
-      font-size: 17px;
+      padding: 6px 12px;
       border-radius: 10px;
-      cursor: pointer;
-      margin-top: 10px;
+      display: inline-block;
+      margin-bottom: 15px;
+      font-weight: 600;
+      font-size: 14px;
     }
 
-    .btn-danger {
-      background: #ff3b3b;
-      margin-top: 20px;
+    .not-premium {
+      background: #999;
+    }
+
+    .btn {
+      width: 100%;
+      margin-top: 15px;
     }
   </style>
 </head>
@@ -69,102 +68,59 @@
 
   <h1>Meu Perfil</h1>
 
-  <div class="foto-preview" id="fotoPreview"></div>
+  <div class="card">
+    <div id="premiumBadge" class="premium-badge">Carregando...</div>
 
-  <input type="file" accept="image/*" id="fotoInput">
+    <div class="row">
+      <div class="label">Nome:</div>
+      <div id="nome"></div>
+    </div>
 
-  <div class="perfil-box">
+    <div class="row">
+      <div class="label">Idade:</div>
+      <div id="idade"></div>
+    </div>
 
-    <label>Nome:</label>
-    <input type="text" id="nome">
-
-    <label>Email:</label>
-    <input type="email" id="email">
-
-    <label>Data de Nascimento:</label>
-    <input type="date" id="nascimento">
-
-    <label>Objetivo:</label>
-    <select id="objetivo">
-      <option value="aparencia">Melhorar Aparência</option>
-      <option value="pele">Pele / Skincare</option>
-      <option value="estilo">Estilo e Roupas</option>
-      <option value="postura">Postura e Imagem</option>
-    </select>
-
+    <div class="row">
+      <div class="label">Dia atual do desafio:</div>
+      <div id="dia"></div>
+    </div>
   </div>
 
-  <button class="btn-main" onclick="salvar()">Salvar Alterações</button>
-  <button class="btn-main" onclick="goTo('dashboard')">Voltar</button>
-  <button class="btn-main btn-danger" onclick="logout()">Sair da Conta</button>
-  <button class="btn-main btn-danger" onclick="apagarConta()">Apagar Conta</button>
+  <button onclick="editarPerfil()" class="btn">Editar Perfil</button>
+  <button onclick="logout()" class="btn" style="background:#ff3b30;color:white;">Sair</button>
+
+  <button onclick="goTo('home')" class="btn-voltar">Voltar</button>
 
   <script type="module">
-    import { loadDB, saveDB, resetDB } from "../database.js";
+    import { loadDB } from "../database.js";
     import { goTo } from "../navigation.js";
 
     window.goTo = goTo;
 
-    function carregarPerfil() {
-      const db = loadDB();
-      const user = db.user || {};
+    const db = loadDB();
 
-      document.getElementById("nome").value = user.nome || "";
-      document.getElementById("email").value = user.email || "";
-      document.getElementById("nascimento").value = user.nascimento || "";
-      document.getElementById("objetivo").value = user.objetivo || "aparencia";
+    document.getElementById("nome").textContent = db.user?.nome || "—";
+    document.getElementById("idade").textContent = db.user?.idade || "—";
+    document.getElementById("dia").textContent = db.day || 1;
 
-      if (user.foto) {
-        document.getElementById("fotoPreview").style.backgroundImage = `url(${user.foto})`;
-      }
+    const badge = document.getElementById("premiumBadge");
+
+    if (db.premium) {
+      badge.textContent = "🔥 Usuário Premium";
+    } else {
+      badge.textContent = "🔒 Grátis";
+      badge.classList.add("not-premium");
     }
 
-    function salvar() {
-      const db = loadDB();
-
-      db.user = {
-        ...db.user,
-        nome: document.getElementById("nome").value,
-        email: document.getElementById("email").value,
-        nascimento: document.getElementById("nascimento").value,
-        objetivo: document.getElementById("objetivo").value,
-      };
-
-      saveDB(db);
-      alert("Dados salvos!");
+    window.editarPerfil = function () {
+      goTo("cadastro");
     }
-
-    document.getElementById("fotoInput").addEventListener("change", function (e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        const db = loadDB();
-        db.user.foto = event.target.result;
-        saveDB(db);
-
-        document.getElementById("fotoPreview").style.backgroundImage = `url(${event.target.result})`;
-      };
-
-      reader.readAsDataURL(file);
-    });
 
     window.logout = function () {
-      localStorage.removeItem("appData");
-      alert("Você saiu.");
-      goTo("cadastro");
-    };
-
-    window.apagarConta = function () {
-      if (!confirm("Tem certeza que deseja apagar sua conta? Isso é irreversível.")) return;
-
-      resetDB();
-      alert("Conta removida.");
-      goTo("cadastro");
-    };
-
-    carregarPerfil();
+      localStorage.removeItem("db_lasy");
+      goTo("login");
+    }
   </script>
 
 </body>
