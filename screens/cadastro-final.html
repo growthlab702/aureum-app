@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finalizar Cadastro</title>
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      text-align: center;
+      padding: 30px;
+    }
+
+    .foto-preview {
+      width: 140px;
+      height: 140px;
+      background: #eee;
+      margin: 20px auto;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      border: 2px solid #aaa;
+    }
+
+    .foto-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    input[type="file"] {
+      margin-top: 15px;
+    }
+
+    .btn {
+      padding: 14px 26px;
+      background: #0a66ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 25px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Finalize seu cadastro</h1>
+  <p>Envie sua foto para concluir.</p>
+
+  <div class="foto-preview" id="preview">
+    <span>Foto</span>
+  </div>
+
+  <input type="file" id="upload" accept="image/*">
+
+  <button class="btn" onclick="finalizar()">Finalizar</button>
+
+  <script type="module">
+    import { saveUpload } from "../upload.js";
+    import { loadDB, saveDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+
+    const uploadInput = document.getElementById("upload");
+    const preview = document.getElementById("preview");
+    let fotoBase64 = null;
+
+    uploadInput.addEventListener("change", function () {
+      const file = uploadInput.files[0];
+
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        fotoBase64 = e.target.result;
+        preview.innerHTML = `<img src="${fotoBase64}">`;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    window.finalizar = function () {
+
+      if (!fotoBase64) {
+        alert("Envie uma foto para continuar!");
+        return;
+      }
+
+      const db = loadDB();
+      const userId = db.userId || "user";
+
+      const salvar = saveUpload(userId, { name: "foto.png", data: fotoBase64 });
+
+      if (salvar.error) {
+        alert("Erro ao salvar imagem.");
+        return;
+      }
+
+      db.foto = salvar.path;
+      saveDB(db);
+
+      goTo("home");
+    };
+  </script>
+
+</body>
+</html>
