@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Análise Facial</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #preview {
+      width: 100%;
+      max-width: 350px;
+      margin: 0 auto 25px auto;
+      display: none;
+      border-radius: 12px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+    }
+
+    #loading {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Análise Facial</h1>
+
+  <input type="file" id="fileInput" accept="image/*" hidden>
+
+  <button class="btn" style="background:#0a66ff; color:white;" onclick="escolherFoto()">
+    Selecionar Foto
+  </button>
+
+  <img id="preview">
+
+  <button id="analisarBtn" class="btn" style="background:#ffb800; display:none;" onclick="enviarParaIA()">
+    Analisar com IA
+  </button>
+
+  <div id="loading">Processando imagem...</div>
+
+  <button onclick="goTo('home')" class="btn-voltar">Voltar</button>
+
+  <script type="module">
+    import { goTo } from "../navigation.js";
+    window.goTo = goTo;
+
+    const fileInput = document.getElementById("fileInput");
+    const preview = document.getElementById("preview");
+    const analisarBtn = document.getElementById("analisarBtn");
+    const loading = document.getElementById("loading");
+
+    window.escolherFoto = () => fileInput.click();
+
+    fileInput.onchange = async () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const imgURL = URL.createObjectURL(file);
+      preview.src = imgURL;
+      preview.style.display = "block";
+
+      analisarBtn.style.display = "block";
+    };
+
+    window.enviarParaIA = async () => {
+      loading.style.display = "block";
+      analisarBtn.style.display = "none";
+
+      await new Promise(res => setTimeout(res, 1500)); // simulação
+
+      alert("Análise completa! (IA será integrada depois)");
+      loading.style.display = "none";
+      goTo("resultado-analise");
+    };
+  </script>
+
+</body>
+
+</html>
