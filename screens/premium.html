@@ -2,9 +2,9 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Assinatura Premium</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium</title>
 
   <link rel="stylesheet" href="../style.css">
 
@@ -18,142 +18,101 @@
       margin-bottom: 10px;
     }
 
-    .sub-title {
+    .sub {
       text-align: center;
-      font-size: 15px;
-      opacity: 0.7;
       margin-bottom: 25px;
+      font-size: 16px;
+      color: #666;
     }
 
-    .planos {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    .plan {
+      background: white;
+      padding: 18px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
-    .plano {
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 20px;
-      border: 2px solid #e6e6e6;
-      cursor: pointer;
-      transition: 0.2s;
+    .plan h2 {
+      margin-top: 0;
     }
 
-    .plano:hover {
-      transform: scale(1.02);
-      border-color: #0a66ff;
-    }
-
-    .plano.recomendado {
-      border-color: #0a66ff;
-      box-shadow: 0px 0px 8px rgba(10, 102, 255, 0.25);
-    }
-
-    .tag-reco {
-      background: #0a66ff;
-      color: white;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      display: inline-block;
+    .price {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 8px;
       margin-bottom: 10px;
     }
 
-    .plano-titulo {
-      font-size: 20px;
-      font-weight: bold;
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: #0a66ff;
+      border-radius: 10px;
+      color: white;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
     }
 
-    .plano-preco {
-      font-size: 28px;
-      font-weight: bold;
-      margin: 6px 0;
-    }
-
-    .plano-descricao {
-      opacity: 0.75;
-      font-size: 14px;
-    }
-
-    .beneficios {
+    .btn-secondary {
+      width: 100%;
+      padding: 14px;
+      background: #ddd;
+      border-radius: 10px;
+      color: #333;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
       margin-top: 20px;
-    }
-
-    .beneficio {
-      margin-bottom: 5px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .beneficio span {
-      font-size: 14px;
-    }
-
-    .btn-voltar {
-      margin-top: 30px;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Desbloqueie o Premium</h1>
-  <div class="sub-title">Transformação estética real começa aqui</div>
+  <h1>Assine o Premium</h1>
+  <p class="sub">Desbloqueie todos os materiais, ferramentas e o programa completo.</p>
 
-  <div class="planos">
-
-    <!-- PLANO MENSAL -->
-    <div class="plano" onclick="assinar('mensal')">
-      <div class="plano-titulo">Plano Mensal</div>
-      <div class="plano-preco">R$ 29,90/mês</div>
-      <div class="plano-descricao">Acesso total, sem limitações.</div>
-
-      <div class="beneficios">
-        <div class="beneficio">✔ <span>Análises faciais avançadas</span></div>
-        <div class="beneficio">✔ <span>Biblioteca Premium completa</span></div>
-        <div class="beneficio">✔ <span>Simulações estéticas</span></div>
-        <div class="beneficio">✔ <span>Modo Transformação 30 Dias</span></div>
-      </div>
-    </div>
-
-    <!-- PLANO ANUAL -->
-    <div class="plano recomendado" onclick="assinar('anual')">
-      <div class="tag-reco">MAIS ESCOLHIDO</div>
-      <div class="plano-titulo">Plano Anual</div>
-      <div class="plano-preco">R$ 199/ano</div>
-      <div class="plano-descricao">7 meses de economia. Transformação real.</div>
-
-      <div class="beneficios">
-        <div class="beneficio">✨ <span>Acesso vitalício enquanto durar o plano</span></div>
-        <div class="beneficio">✨ <span>Atualizações exclusivas</span></div>
-        <div class="beneficio">✨ <span>Materiais secretos liberados</span></div>
-      </div>
-    </div>
-
+  <div class="plan">
+    <h2>Plano Mensal</h2>
+    <p class="price">R$ XX,XX / mês</p>
+    <button class="btn-primary" onclick="ComprarMensal()">Assinar Mensal</button>
   </div>
 
-  <button onclick="goTo('home')" class="btn-voltar">Voltar</button>
+  <div class="plan">
+    <h2>Plano Anual</h2>
+    <p class="price">R$ XX,XX / ano</p>
+    <button class="btn-primary" onclick="ComprarAnual()">Assinar Anual</button>
+  </div>
+
+  <button class="btn-secondary" onclick="goTo('home')">Voltar</button>
 
   <script type="module">
     import { loadDB, saveDB } from "../database.js";
     import { goTo } from "../navigation.js";
 
-    window.assinar = function (tipo) {
-      const db = loadDB();
+    window.goTo = goTo;
 
-      db.premium = true;
-      db.tipoPlano = tipo;
-      db.dataAtivacao = new Date().toISOString();
+    // 🔥 Coloque aqui os links do checkout da Kirvano quando criar
+    const LINK_MENSAL = "https://checkout-link-mensal";
+    const LINK_ANUAL = "https://checkout-link-anual";
 
-      saveDB(db);
-
-      alert("Premium ativado com sucesso!");
-      goTo("home");
+    window.ComprarMensal = function () {
+      window.location.href = LINK_MENSAL;
     };
 
-    window.goTo = goTo;
+    window.ComprarAnual = function () {
+      window.location.href = LINK_ANUAL;
+    };
+
+    // Função que ativa o premium quando o usuário voltar do checkout
+    export function ativarPremium() {
+      const db = loadDB();
+      db.premium = true;
+      saveDB(db);
+    }
   </script>
 
 </body>
