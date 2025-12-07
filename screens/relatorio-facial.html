@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório Facial</title>
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #fotoPreview {
+      width: 180px;
+      height: 180px;
+      border-radius: 12px;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 20px;
+      border: 2px solid #ddd;
+    }
+
+    .box {
+      background: #f5f5f5;
+      margin-bottom: 22px;
+      padding: 15px;
+      border-radius: 12px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      font-size: 18px;
+      margin-top: 0;
+    }
+
+    ul {
+      padding-left: 18px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: #0a66ff;
+      color: white;
+      border-radius: 10px;
+      margin-top: 20px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Sua Análise Facial</h1>
+
+  <img id="fotoPreview" src="" alt="Sua foto">
+
+  <div class="box">
+    <h2>Pontos Fortes</h2>
+    <ul id="pontosFortes"></ul>
+  </div>
+
+  <div class="box">
+    <h2>Melhorias Recomendadas</h2>
+    <ul id="sugestoes"></ul>
+  </div>
+
+  <button class="btn" onclick="goTo('dashboard')">Voltar ao Início</button>
+
+  <script type="module">
+    import { loadDB, saveDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    function carregarRelatorio() {
+      const db = loadDB();
+
+      if (!db.foto) {
+        alert("Nenhuma foto encontrada. Envie sua foto novamente.");
+        goTo("upload-foto");
+        return;
+      }
+
+      // Exibe foto salva
+      document.getElementById("fotoPreview").src = db.foto;
+
+      // Caso não exista análise, cria uma fake estável
+      if (!db.analise) {
+        db.analise = {
+          pontosFortes: [
+            "Boa simetria natural",
+            "Linhas de expressão discretas",
+            "Formato de rosto equilibrado"
+          ],
+          sugestoes: [
+            "Melhorar iluminação das fotos para fotos mais estéticas",
+            "Usar skincare básico diário",
+            "Corte de cabelo com laterais mais limpas",
+          ]
+        };
+
+        saveDB(db);
+      }
+
+      // Preenche listas
+      preencherLista("pontosFortes", db.analise.pontosFortes);
+      preencherLista("sugestoes", db.analise.sugestoes);
+    }
+
+    function preencherLista(id, lista) {
+      const ul = document.getElementById(id);
+      ul.innerHTML = "";
+      lista.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        ul.appendChild(li);
+      });
+    }
+
+    carregarRelatorio();
+  </script>
+
+</body>
+
+</html>
