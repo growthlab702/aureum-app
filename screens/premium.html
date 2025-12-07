@@ -11,95 +11,95 @@
   <style>
     body {
       padding: 25px;
+      background: #fafafa;
       font-family: "Inter", sans-serif;
-      background: linear-gradient(180deg, #0a66ff 0%, #003d99 100%);
-      color: white;
     }
 
-    .title {
-      font-size: 28px;
-      font-weight: 800;
-      margin-bottom: 10px;
+    h1 {
       text-align: center;
-    }
-
-    .subtitle {
-      font-size: 16px;
-      margin-bottom: 25px;
-      opacity: 0.9;
-      text-align: center;
-    }
-
-    .benefit {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 15px;
-      border-radius: 14px;
       margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 16px;
-      backdrop-filter: blur(6px);
+      font-size: 28px;
+      font-weight: 900;
     }
 
-    .btn {
-      width: 100%;
-      padding: 16px;
-      background: #ffffff;
-      color: #0a66ff;
-      border: none;
-      border-radius: 14px;
-      font-size: 18px;
-      font-weight: 700;
-      margin-top: 25px;
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    .btn:hover {
-      transform: scale(1.03);
-    }
-
-    .back {
+    p {
       text-align: center;
-      margin-top: 18px;
-      opacity: 0.8;
+      margin-bottom: 25px;
+      font-size: 16px;
+      opacity: .8;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .beneficio {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    .btn-premium {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      background: #ffb800;
+      border: none;
+      border-radius: 10px;
+      font-weight: 800;
       cursor: pointer;
+    }
+
+    .btn-voltar {
+      margin-top: 20px;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="title">Acesso Premium</div>
-  <div class="subtitle">Desbloqueie todo seu potencial estético</div>
+  <h1>Premium</h1>
+  <p>Desbloqueie sua transformação completa</p>
 
-  <div class="benefit">🔥 Acesso total à Biblioteca Premium</div>
-  <div class="benefit">📘 Guias avançados de Estética Masculina</div>
-  <div class="benefit">🤖 Chat Consultor ilimitado</div>
-  <div class="benefit">🧬 Análises faciais completas</div>
-  <div class="benefit">⚡ Atualizações futuras garantidas</div>
+  <div class="card">
+    <h2 style="text-align:center; margin-bottom:15px;">O que você ganha:</h2>
 
-  <button class="btn" onclick="comprarPremium()">Desbloquear Premium</button>
+    <div class="beneficio">💎 Acesso total à Biblioteca Premium</div>
+    <div class="beneficio">💎 Análise Facial Avançada + IA completa</div>
+    <div class="beneficio">💎 Simulações AR exclusivas</div>
+    <div class="beneficio">💎 Rotinas personalizadas liberadas</div>
+    <div class="beneficio">💎 Conteúdos secretos: estilo, grooming, estética</div>
+    <div class="beneficio">💎 Desafio de 30 Dias completo</div>
+    <div class="beneficio">💎 Suporte direto</div>
 
-  <div class="back" onclick="goTo('home')">Voltar</div>
+    <br>
+
+    <button class="btn-premium" onclick="ativarPremium()">Ativar Premium</button>
+  </div>
+
+  <button onclick="goTo('settings')" class="btn-voltar">Voltar</button>
 
   <script type="module">
-    import { loadDB } from "../database.js";
+    import { loadDB, saveDB } from "../database.js";
     import { goTo } from "../navigation.js";
 
     window.goTo = goTo;
 
-    function comprarPremium() {
+    window.ativarPremium = function () {
+      const confirmar = confirm("Confirmar ativação premium?");
+
+      if (!confirmar) return;
+
       const db = loadDB();
       db.premium = true;
+      saveDB(db);
 
-      localStorage.setItem("db_lasy", JSON.stringify(db));
-
-      alert("Premium desbloqueado com sucesso!");
-
+      alert("Premium ativado com sucesso!");
       goTo("home");
-    }
+    };
   </script>
 
 </body>
