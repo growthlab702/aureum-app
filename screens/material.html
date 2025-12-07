@@ -11,92 +11,88 @@
   <style>
     body {
       padding: 25px;
-      background: linear-gradient(180deg, #ffffff 0%, #f2f2f2 100%);
       font-family: "Inter", sans-serif;
+      background: #ffffff;
+      color: #1a1a1a;
+      line-height: 1.6;
     }
 
-    .header {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .title {
+    h1 {
       font-size: 26px;
       font-weight: 800;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
+      text-align: left;
     }
 
-    .content-box {
-      background: white;
-      padding: 22px;
-      border-radius: 18px;
-      box-shadow: 0px 6px 20px rgba(0,0,0,0.08);
-      line-height: 1.7;
+    .content {
+      white-space: pre-line;
       font-size: 17px;
-      animation: fadeIn 0.35s ease;
+      background: #f7f7f7;
+      padding: 20px;
+      border-radius: 12px;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px);}
-      to { opacity: 1; transform: translateY(0);}
+    .locked-banner {
+      background: #ff3b30;
+      color: white;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
     }
 
-    .btn-voltar {
-      margin-top: 30px;
+    .btn {
+      margin-top: 25px;
+      width: 100%;
     }
   </style>
-
 </head>
 
 <body>
 
-  <div class="header">
-    <div class="title" id="title">Carregando...</div>
+  <h1 id="titulo">Carregando...</h1>
+
+  <div id="alertaPremium" class="locked-banner" style="display:none;">
+    🔒 Este material é Premium. Desbloqueie para acessar.
   </div>
 
-  <div class="content-box" id="content"></div>
+  <div id="conteudo" class="content"></div>
 
   <button onclick="goTo('biblioteca')" class="btn-voltar">Voltar</button>
 
   <script type="module">
-    import { loadDB, saveDB } from "../database.js";
+    import { loadDB } from "../database.js";
     import { goTo } from "../navigation.js";
 
     window.goTo = goTo;
 
-    function render() {
-      const db = loadDB();
+    const db = loadDB();
+    const id = db.materialAtual;
 
-      const materialId = db.materialAtual;
+    const lista = db.library || [];
+    const material = lista.find(m => m.id === id);
 
-      if (!materialId) {
-        document.getElementById("title").innerText = "Erro ao carregar";
-        document.getElementById("content").innerText =
-          "Não foi possível encontrar esse conteúdo.";
-        return;
+    const titulo = document.getElementById("titulo");
+    const conteudo = document.getElementById("conteudo");
+    const alerta = document.getElementById("alertaPremium");
+
+    if (!material) {
+      titulo.textContent = "Conteúdo não encontrado.";
+      conteudo.textContent = "";
+    } else {
+      titulo.textContent = material.titulo;
+
+      if (material.premium && !db.premium) {
+        // bloqueado
+        alerta.style.display = "block";
+        conteudo.textContent = "";
+      } else {
+        // liberado
+        conteudo.textContent = material.texto || "Conteúdo vazio.";
       }
-
-      const dados = db.library.find(x => x.id === materialId);
-
-      if (!dados) {
-        document.getElementById("title").innerText = "Conteúdo não encontrado";
-        document.getElementById("content").innerText =
-          "O material que você tentou abrir não existe.";
-        return;
-      }
-
-      // Preencher tela
-      document.getElementById("title").innerText = dados.titulo;
-      document.getElementById("content").innerHTML = dados.texto.replace(/\n/g, "<br>");
-
-      // salvar leitura
-      if (!db.lidos) db.lidos = [];
-      if (!db.lidos.includes(materialId)) db.lidos.push(materialId);
-      saveDB(db);
     }
-
-    render();
-
   </script>
 
 </body>
