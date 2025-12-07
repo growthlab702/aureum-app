@@ -91,3 +91,175 @@ input {
 #sendBtn:hover {
     opacity: 0.8;
 }
+
+/* ================================
+   ESTILO GERAL DO APLICATIVO AUREUM
+   ================================ */
+
+:root {
+    --bg: #0d0d0d;
+    --bg-light: #141414;
+    --text: #f1f1f1;
+    --gold: #d4af37;
+    --gray: #888;
+    --danger: #e63946;
+    --success: #2a9d8f;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    padding-bottom: 60px;
+}
+
+h1, h2, h3, h4 {
+    font-weight: 700;
+}
+
+/* ================================
+   CONTAINERS
+   ================================ */
+
+.container {
+    width: 90%;
+    max-width: 480px;
+    margin: auto;
+    padding: 20px 0;
+}
+
+.card {
+    background: var(--bg-light);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #1c1c1c;
+}
+
+/* ================================
+   FORMULÁRIOS
+   ================================ */
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+    background: #1c1c1c;
+    border: 1px solid #2a2a2a;
+    color: var(--text);
+}
+
+input:focus, select:focus {
+    border-color: var(--gold);
+    outline: none;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 15px;
+    background: var(--gold);
+    border: none;
+    color: #000;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+/* ================================
+   FOTO DE PERFIL
+   ================================ */
+
+#userPhoto {
+    width: 120px;
+    height: 120px;
+    border-radius: 100%;
+    object-fit: cover;
+    border: 2px solid var(--gold);
+    display: block;
+    margin: 20px auto;
+}
+
+/* ================================
+   ALERTAS
+   ================================ */
+
+.alert-message {
+    width: 100%;
+    background: #222;
+    padding: 14px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+}
+
+.alert-info { color: var(--text); }
+.alert-success { color: var(--success); }
+.alert-danger { color: var(--danger); }
+
+/* ================================
+   CABEÇALHO
+   ================================ */
+
+.header {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.header h1 {
+    color: var(--gold);
+    font-size: 24px;
+}
+
+/* ================================
+   BOTÃO DE LOGOUT
+   ================================ */
+
+#logoutBtn {
+    width: auto;
+    padding: 8px 14px;
+    background: var(--danger);
+    color: white;
+    border-radius: 6px;
+    float: right;
+    margin-top: -10px;
+}
+
+/* ================================
+   LISTAS / CARDS
+   ================================ */
+
+.list-item {
+    padding: 15px;
+    background: #1a1a1a;
+    border: 1px solid #252525;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.list-item h3 {
+    margin-bottom: 6px;
+}
+
+/* ================================
+   RESPONSIVIDADE
+   ================================ */
+
+@media (max-width: 400px) {
+    h1 { font-size: 22px; }
+    #userPhoto { width: 100px; height: 100px; }
+}
