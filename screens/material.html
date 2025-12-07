@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Material</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .content-box {
+      background: #f8f8f8;
+      padding: 20px;
+      border-radius: 12px;
+      line-height: 1.6;
+      white-space: pre-line;
+      font-size: 16px;
+    }
+
+    .btn-voltar {
+      padding: 14px 26px;
+      background: #0a66ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 25px;
+      font-size: 16px;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1 id="tituloMat">Material</h1>
+
+  <div id="conteudo" class="content-box">
+    Carregando conteúdo...
+  </div>
+
+  <button onclick="goTo('biblioteca')" class="btn-voltar">Voltar</button>
+
+  <script type="module">
+    import { loadDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    function carregar() {
+      const db = loadDB();
+
+      const id = db.materialAtual;
+      const materiais = db.library || [];
+
+      const item = materiais.find(x => x.id === id);
+
+      if (!item) {
+        document.getElementById("conteudo").innerText = "Erro: material não encontrado.";
+        return;
+      }
+
+      if (item.premium && !db.premium) {
+        document.getElementById("conteudo").innerText =
+          "Este conteúdo é Premium. Faça upgrade para acessar.";
+        return;
+      }
+
+      document.getElementById("tituloMat").innerText = item.titulo;
+      document.getElementById("conteudo").innerText = item.conteudo;
+    }
+
+    carregar();
+  </script>
+
+</body>
+
+</html>
