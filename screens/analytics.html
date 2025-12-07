@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: white;
+      padding: 18px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .card h2 {
+      margin-top: 0;
+    }
+
+    .value {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      background: #0a66ff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 25px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Seu Progresso</h1>
+
+  <div class="card">
+    <h2>Dias desde que entrou</h2>
+    <p class="value" id="daysActive">--</p>
+  </div>
+
+  <div class="card">
+    <h2>Acessos totais</h2>
+    <p class="value" id="totalAccesses">--</p>
+  </div>
+
+  <div class="card">
+    <h2>Nível Atual</h2>
+    <p class="value" id="level">--</p>
+  </div>
+
+  <button class="btn" onclick="goTo('home')">Voltar</button>
+
+  <script type="module">
+    import { loadDB, saveDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    function calculateDays(startDate) {
+      const start = new Date(startDate);
+      const now = new Date();
+      const diff = now - start;
+      return Math.floor(diff / (1000 * 60 * 60 * 24));
+    }
+
+    function render() {
+      const db = loadDB();
+
+      // Se o app nunca registrou data, registra agora
+      if (!db.user.createdAt) {
+        db.user.createdAt = new Date().toISOString();
+        saveDB(db);
+      }
+
+      const days = calculateDays(db.user.createdAt);
+      const accesses = db.analytics?.accesses || 0;
+      const level = db.analytics?.level || 1;
+
+      document.getElementById("daysActive").textContent = days + " dias";
+      document.getElementById("totalAccesses").textContent = accesses + "x";
+      document.getElementById("level").textContent = "Nível " + level;
+    }
+
+    render();
+  </script>
+
+</body>
+
+</html>
