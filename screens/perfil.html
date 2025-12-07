@@ -11,85 +11,48 @@
   <style>
     body {
       padding: 25px;
-    }
-
-    h1 {
       text-align: center;
-      margin-bottom: 20px;
     }
 
-    .card {
-      background: #f4f4f4;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-    }
-
-    .foto {
+    .avatar {
       width: 120px;
       height: 120px;
-      border-radius: 60px;
-      object-fit: cover;
-      display: block;
-      margin: 0 auto 15px auto;
-      border: 3px solid #0a66ff;
-    }
-
-    .progress {
-      width: 100%;
+      border-radius: 50%;
       background: #ddd;
-      height: 10px;
-      border-radius: 6px;
-      margin-top: 10px;
-      overflow: hidden;
+      margin: auto;
+      margin-bottom: 20px;
+      background-size: cover;
+      background-position: center;
     }
 
-    .progress-bar {
-      height: 10px;
+    .info {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      padding: 12px 20px;
       background: #0a66ff;
-      width: 0%;
-    }
-
-    .btn-big {
-      width: 100%;
-      margin-top: 15px;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      margin-top: 20px;
+      cursor: pointer;
+      font-size: 15px;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Seu Perfil</h1>
+  <div class="avatar" id="avatar"></div>
 
-  <div class="card">
-    <img id="fotoUser" class="foto" src="../assets/user-default.png">
-
-    <button onclick="alterarFoto()" class="btn-big">Alterar Foto</button>
-
-    <input id="fileInput" type="file" accept="image/*" style="display:none;">
+  <div class="info">
+    <p><strong>Nome:</strong> <span id="userName"></span></p>
+    <p><strong>Tipo de Conta:</strong> <span id="userStatus"></span></p>
   </div>
 
-  <div class="card">
-    <h3>Suas Informações</h3>
-    <p><strong>Nome:</strong> <span id="nome"></span></p>
-    <p><strong>Idade:</strong> <span id="idade"></span></p>
-    <p><strong>Email:</strong> <span id="email"></span></p>
-
-    <p><strong>Status:</strong> <span id="statusPremium"></span></p>
-
-    <button onclick="goTo('editar-perfil')" class="btn-big">Editar Perfil</button>
-  </div>
-
-  <div class="card">
-    <h3>Seu Progresso</h3>
-    <p><strong>Dias concluídos:</strong> <span id="dias"></span> / 30</p>
-
-    <div class="progress">
-      <div id="barra" class="progress-bar"></div>
-    </div>
-  </div>
-
-  <button onclick="goTo('home')" class="btn-voltar">Voltar</button>
+  <button class="btn" onclick="goTo('home')">Voltar</button>
 
   <script type="module">
     import { loadDB } from "../database.js";
@@ -97,50 +60,17 @@
 
     window.goTo = goTo;
 
-    const nome = document.getElementById("nome");
-    const idade = document.getElementById("idade");
-    const email = document.getElementById("email");
-    const fotoUser = document.getElementById("fotoUser");
-    const statusPremium = document.getElementById("statusPremium");
-    const dias = document.getElementById("dias");
-    const barra = document.getElementById("barra");
-    const fileInput = document.getElementById("fileInput");
-
-    function init() {
+    function render() {
       const db = loadDB();
 
-      nome.textContent = db.nome || "Não informado";
-      idade.textContent = db.idade || "Não informado";
-      email.textContent = db.email || "Não informado";
+      document.getElementById("userName").textContent = db.user?.nome || "Usuário";
+      document.getElementById("userStatus").textContent = db.premium ? "Premium" : "Gratuito";
 
-      fotoUser.src = db.foto || "../assets/user-default.png";
-      statusPremium.textContent = db.premium ? "Premium" : "Grátis";
-
-      let concluidos = db.cronograma.filter(x => x.status === "done").length;
-      dias.textContent = concluidos;
-
-      barra.style.width = (concluidos / 30 * 100) + "%";
+      const avatar = db.user?.avatar || "../assets/avatar_default.png";
+      document.getElementById("avatar").style.backgroundImage = `url('${avatar}')`;
     }
 
-    function alterarFoto() {
-      fileInput.click();
-    }
-
-    fileInput.onchange = function () {
-      const file = this.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const db = loadDB();
-        db.foto = e.target.result;
-        localStorage.setItem("db_lasy", JSON.stringify(db));
-        fotoUser.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    };
-
-    init();
+    render();
   </script>
 
 </body>
