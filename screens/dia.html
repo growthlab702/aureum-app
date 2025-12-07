@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dia</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .box {
+      background: #f4f4f4;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .btn-big {
+      width: 100%;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1 id="titulo"></h1>
+
+  <div id="conteudo" class="box"></div>
+
+  <button id="btnConcluir" class="btn-big">Concluir Dia</button>
+  <button onclick="goTo('cronograma')" class="btn-voltar">Voltar</button>
+
+  <script type="module">
+    import { loadDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    const titulo = document.getElementById("titulo");
+    const conteudo = document.getElementById("conteudo");
+    const btnConcluir = document.getElementById("btnConcluir");
+
+    function init() {
+      const db = loadDB();
+      const dia = db.diaAtual;
+
+      if (!dia) {
+        goTo("cronograma");
+        return;
+      }
+
+      const item = db.cronograma.find(x => x.dia === dia);
+
+      if (!item) {
+        goTo("cronograma");
+        return;
+      }
+
+      titulo.textContent = `Dia ${dia}`;
+      conteudo.textContent = item.conteudo;
+
+      if (item.status === "done") {
+        btnConcluir.innerText = "Dia Concluído ✔";
+        btnConcluir.disabled = true;
+        btnConcluir.style.opacity = "0.7";
+      }
+
+      btnConcluir.onclick = () => concluirDia(dia);
+    }
+
+    function concluirDia(dia) {
+      const db = loadDB();
+      const item = db.cronograma.find(x => x.dia === dia);
+
+      item.status = "done";
+
+      const proximo = db.cronograma.find(x => x.dia === dia + 1);
+      if (proximo && proximo.status === "locked") {
+        proximo.status = "open";
+      }
+
+      localStorage.setItem("db_lasy", JSON.stringify(db));
+
+      goTo("cronograma");
+    }
+
+    init();
+  </script>
+
+</body>
+
+</html>
