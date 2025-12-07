@@ -11,33 +11,40 @@
   <style>
     body {
       padding: 25px;
-      background: #f8f8f8;
-      font-family: "Inter", sans-serif;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 25px;
-      font-weight: 800;
+      margin-bottom: 20px;
     }
 
-    .card {
-      background: white;
-      padding: 18px;
-      border-radius: 14px;
+    .config-item {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 12px;
       margin-bottom: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       cursor: pointer;
-      font-size: 17px;
-      font-weight: 600;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      font-size: 16px;
+      transition: 0.2s;
+    }
+
+    .config-item:hover {
+      background: #ececec;
     }
 
     .danger {
-      color: #ff3b30;
-      font-weight: 700;
+      background: #ffdddd;
+    }
+
+    .danger:hover {
+      background: #ffcccc;
+    }
+
+    .version {
+      margin-top: 30px;
+      text-align: center;
+      opacity: 0.6;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -46,61 +53,79 @@
 
   <h1>Configurações</h1>
 
-  <div class="card" onclick="editar()">
-    Editar Perfil
-    <span>✏️</span>
+  <div class="config-item" onclick="toggleTema()">
+    Alternar tema (Claro / Escuro)
   </div>
 
-  <div class="card" onclick="reiniciar()">
-    Reiniciar Desafio
-    <span>🔄</span>
+  <div class="config-item" onclick="resetProgresso()">
+    Resetar progresso
   </div>
 
-  <div class="card" onclick="premium()">
-    Ativar Premium
-    <span>💎</span>
+  <div class="config-item danger" onclick="apagarConta()">
+    Apagar conta / dados
   </div>
 
-  <div class="card" onclick="suporte()">
+  <div class="config-item" onclick="abrirSuporte()">
     Suporte
-    <span>📨</span>
   </div>
 
-  <div class="card danger" onclick="logout()">
-    Sair da Conta
-    <span>🚪</span>
-  </div>
+  <button class="btn-voltar" onclick="goTo('home')">Voltar</button>
 
-  <button onclick="goTo('home')" class="btn-voltar">Voltar</button>
+  <p class="version">Versão 1.0.0</p>
 
   <script type="module">
-    import { loadDB, saveDB } from "../database.js";
+    import { loadDB, createEmptyDB } from "../database.js";
     import { goTo } from "../navigation.js";
 
     window.goTo = goTo;
 
-    window.editar = function () {
-      goTo("cadastro");
+    // Tema (claro/escuro)
+    window.toggleTema = () => {
+      const atual = document.body.classList.contains("dark");
+      if (atual) {
+        document.body.classList.remove("dark");
+        localStorage.setItem("theme_lasy", "light");
+      } else {
+        document.body.classList.add("dark");
+        localStorage.setItem("theme_lasy", "dark");
+      }
     };
 
-    window.reiniciar = function () {
+    // Aplicar tema salvo
+    const temaSalvo = localStorage.getItem("theme_lasy");
+    if (temaSalvo === "dark") {
+      document.body.classList.add("dark");
+    }
+
+    // Resetar progresso
+    window.resetProgresso = () => {
+      if (!confirm("Tem certeza que deseja resetar seu progresso?")) return;
+
       const db = loadDB();
-      db.day = 1;
-      saveDB(db);
-      alert("Seu desafio foi reiniciado!");
+
+      // Zera apenas progresso, não apaga os dados pessoais
+      db.diario = [];
+      db.tarefas = {};
+      db.materialAtual = null;
+
+      localStorage.setItem("db_lasy", JSON.stringify(db));
+
+      alert("Progresso resetado!");
     };
 
-    window.premium = function () {
-      goTo("premium");
+    // Apagar conta completa
+    window.apagarConta = () => {
+      if (!confirm("⚠ Isso irá apagar TODOS os dados do app. Continuar?")) return;
+
+      const novoDB = createEmptyDB();
+      localStorage.setItem("db_lasy", JSON.stringify(novoDB));
+
+      alert("Conta apagada.");
+      goTo("onboarding");
     };
 
-    window.suporte = function () {
-      alert("Em breve: canal direto com suporte 😎");
-    };
-
-    window.logout = function () {
-      localStorage.removeItem("db_lasy");
-      goTo("login");
+    window.abrirSuporte = () => {
+      window.open("https://wa.me/5599999999999", "_blank");
     };
   </script>
 
