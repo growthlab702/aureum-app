@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biblioteca</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .item {
+      background: #f4f4f4;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item.locked {
+      background: #e3e3e3;
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .item-title {
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .tag {
+      background: #0a66ff;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .tag.locked {
+      background: #d9534f;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Biblioteca</h1>
+
+  <div id="lista"></div>
+
+  <button onclick="goTo('home')" class="btn-voltar">Voltar</button>
+
+  <script type="module">
+    import { loadDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    const lista = document.getElementById("lista");
+
+    function render() {
+      const db = loadDB();
+
+      const materiais = db.library || [];
+
+      lista.innerHTML = "";
+
+      materiais.forEach(mat => {
+        const div = document.createElement("div");
+        div.className = "item " + (mat.premium && !db.premium ? "locked" : "");
+
+        div.innerHTML = `
+          <div class="item-title">${mat.titulo}</div>
+          <div class="tag ${mat.premium && !db.premium ? "locked" : ""}">
+            ${mat.premium ? "Premium" : "Grátis"}
+          </div>
+        `;
+
+        if (!mat.premium || db.premium) {
+          div.onclick = () => abrirMaterial(mat.id);
+        }
+
+        lista.appendChild(div);
+      });
+    }
+
+    function abrirMaterial(id) {
+      const db = loadDB();
+
+      db.materialAtual = id;
+      localStorage.setItem("db_lasy", JSON.stringify(db));
+
+      goTo("material");
+    }
+
+    render();
+  </script>
+
+</body>
+
+</html>
