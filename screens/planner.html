@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planner</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .task {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      transition: 0.2s;
+    }
+
+    .task.done {
+      background: #dff5d8;
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+
+    .task button {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: #0a66ff;
+      color: white;
+      font-size: 12px;
+    }
+
+    .task.done button {
+      background: #888;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Planner do Dia</h1>
+
+  <div id="lista"></div>
+
+  <button class="btn-voltar" onclick="goTo('home')">Voltar</button>
+
+  <script type="module">
+    import { loadDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    const lista = document.getElementById("lista");
+
+    function render() {
+      const db = loadDB();
+      const hoje = new Date().toISOString().slice(0, 10);
+
+      if (!db.tarefas) db.tarefas = {};
+      if (!db.tarefas[hoje]) db.tarefas[hoje] = [];
+
+      const items = db.tarefas[hoje];
+
+      lista.innerHTML = "";
+
+      items.forEach((tarefa, index) => {
+        const div = document.createElement("div");
+        div.className = "task " + (tarefa.feito ? "done" : "");
+
+        div.innerHTML = `
+          <span>${tarefa.texto}</span>
+          <button>${tarefa.feito ? "Desmarcar" : "Concluir"}</button>
+        `;
+
+        div.querySelector("button").onclick = () => toggle(index);
+
+        lista.appendChild(div);
+      });
+    }
+
+    function toggle(index) {
+      const db = loadDB();
+      const hoje = new Date().toISOString().slice(0, 10);
+
+      db.tarefas[hoje][index].feito = !db.tarefas[hoje][index].feito;
+
+      localStorage.setItem("db_lasy", JSON.stringify(db));
+
+      render();
+    }
+
+    render();
+  </script>
+
+</body>
+
+</html>
