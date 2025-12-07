@@ -11,114 +11,85 @@
   <style>
     body {
       padding: 25px;
-      background: linear-gradient(180deg, #ffffff 0%, #f4f4f4 100%);
-      font-family: "Inter", sans-serif;
     }
 
-    .header {
-      margin-bottom: 25px;
-    }
-
-    .title {
-      font-size: 26px;
-      font-weight: 800;
-    }
-
-    .username {
-      font-size: 18px;
-      color: #555;
-      margin-top: 5px;
-    }
-
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 18px;
-      box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.08);
-      margin-bottom: 20px;
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    .card:hover {
-      transform: scale(1.02);
-    }
-
-    .card-title {
-      font-size: 19px;
-      font-weight: bold;
-    }
-
-    .card-desc {
-      color: #555;
-      font-size: 15px;
-      margin-top: 5px;
-    }
-
-    .premium-banner {
-      margin-top: 30px;
-      background: #0a66ff;
-      padding: 18px;
-      border-radius: 14px;
-      color: white;
+    h1 {
       text-align: center;
-      font-size: 18px;
-      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .box {
+      background: #f5f5f5;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: #0a66ff;
+      color: white;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 16px;
       cursor: pointer;
+    }
+
+    .btn-premium {
+      background: #e6b800;
+    }
+
+    .locked {
+      opacity: 0.6;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="header">
-    <div class="title">Seu Painel</div>
-    <div class="username" id="usernameText">Carregando...</div>
+  <h1>Bem-vindo 👑</h1>
+
+  <!-- Se não for premium, aparece -->
+  <div id="premiumBox" data-free class="box">
+    <h2>Desbloqueie o Premium</h2>
+    <p>Acesso total a toda biblioteca + materiais avançados.</p>
+    <button class="btn btn-premium" onclick="abrirCheckout()">Assinar Premium</button>
   </div>
 
-  <div class="card" onclick="goTo('analise')">
-    <div class="card-title">Análise Facial</div>
-    <div class="card-desc">Envie sua foto e receba um relatório completo e personalizado.</div>
+  <!-- Se for premium, aparece -->
+  <div id="premiumAtivo" data-premium class="box" style="display:none;">
+    <h2>🎉 Premium Ativo</h2>
+    <p>Você tem acesso total a todos os conteúdos.</p>
   </div>
 
-  <div class="card" onclick="goTo('biblioteca')">
-    <div class="card-title">Biblioteca Estética</div>
-    <div class="card-desc">Materiais gratuitos e premium para sua evolução visual.</div>
+  <div class="box">
+    <h2>Biblioteca</h2>
+    <button class="btn" onclick="goTo('biblioteca')">Acessar Biblioteca</button>
   </div>
 
-  <div class="card" onclick="goTo('transformacao')">
-    <div class="card-title">Transformação 30 Dias</div>
-    <div class="card-desc">Um programa guiado para mudar seu visual em 30 dias.</div>
-  </div>
-
-  <div class="card" onclick="goTo('chat')">
-    <div class="card-title">Chat Inteligente</div>
-    <div class="card-desc">Dúvidas? Pergunte ao seu consultor estético 24h.</div>
-  </div>
-
-  <div id="premiumBanner" class="premium-banner" onclick="goTo('premium')">
-    Desbloquear Premium 🔓
+  <div class="box">
+    <h2>Progresso</h2>
+    <button class="btn" onclick="goTo('progresso')">Ver Progresso</button>
   </div>
 
   <script type="module">
-    import { loadDB } from "../database.js";
+    import { isPremium } from "../modules/premiumManager.js";
+    import { updatePremiumUI } from "../modules/updatePremiumUI.js";
     import { goTo } from "../navigation.js";
 
     window.goTo = goTo;
 
-    function render() {
-      const db = loadDB();
-
-      document.getElementById("usernameText").innerText = `Olá, ${db.nome || "Usuário"}`;
-
-      const banner = document.getElementById("premiumBanner");
-
-      if (db.premium) {
-        banner.style.display = "none";
-      }
+    function abrirCheckout() {
+      // Troque depois pelo LINK REAL do checkout da Kirvano
+      window.location.href = "https://seu-checkout-aqui.com";
     }
+    window.abrirCheckout = abrirCheckout;
 
-    render();
+    // Atualiza a UI de acordo com premium/free
+    updatePremiumUI();
   </script>
 
 </body>
