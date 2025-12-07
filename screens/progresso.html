@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Progresso</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .box {
+      background: #f5f5f5;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+
+    .progress-item {
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .percent {
+      font-weight: bold;
+      color: #0a66ff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Seu Progresso</h1>
+
+  <div id="lista"></div>
+
+  <button onclick="goTo('home')" class="btn-voltar">Voltar</button>
+
+  <script type="module">
+    import { loadDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+    window.goTo = goTo;
+
+    const lista = document.getElementById("lista");
+
+    function render() {
+      const db = loadDB();
+      const progresso = db.progress || {};
+
+      lista.innerHTML = "";
+
+      Object.keys(progresso).forEach(id => {
+        const item = document.createElement("div");
+        item.className = "progress-item";
+
+        item.innerHTML = `
+          <div><strong>Material:</strong> ${id}</div>
+          <div><strong>Progresso:</strong> <span class="percent">${progresso[id]}%</span></div>
+        `;
+
+        lista.appendChild(item);
+      });
+
+      if (Object.keys(progresso).length === 0) {
+        lista.innerHTML = `<p>Você ainda não iniciou nenhum material.</p>`;
+      }
+    }
+
+    render();
+  </script>
+
+</body>
+
+</html>
