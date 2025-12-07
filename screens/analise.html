@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análise Facial</title>
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      text-align: center;
+      padding: 25px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    #preview {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      border: 2px solid #777;
+      object-fit: cover;
+      display: none;
+      margin: 20px auto;
+    }
+
+    input[type="file"] {
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 14px 26px;
+      background: #0a66ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 25px;
+      font-size: 16px;
+      width: 90%;
+      max-width: 300px;
+    }
+
+    .box {
+      background: #f4f4f4;
+      padding: 20px;
+      border-radius: 12px;
+      width: 85%;
+      margin: 20px auto;
+      text-align: left;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Análise Facial</h1>
+
+  <p>Envie uma foto clara do seu rosto para gerar o relatório.</p>
+
+  <input type="file" id="fotoUser" accept="image/*">
+  <img id="preview">
+
+  <button class="btn" onclick="gerarAnalise()">Gerar Análise</button>
+
+  <div class="box" id="resultado">
+    <h3>Resultado da Análise</h3>
+    <p id="textoAnalise">Processando...</p>
+  </div>
+
+  <button class="btn" onclick="goTo('home')">Voltar</button>
+
+  <script type="module">
+    import { saveUpload } from "../upload.js";
+    import { loadDB, saveDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    let base64Foto = null;
+
+    const inputFoto = document.getElementById("fotoUser");
+    const preview = document.getElementById("preview");
+
+    // Preview da imagem enviada
+    inputFoto.addEventListener("change", function () {
+      const file = inputFoto.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        base64Foto = e.target.result;
+        preview.src = base64Foto;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Gera texto fake até integrar IA real
+    function gerarTextoFake() {
+      return `
+        • Seu formato de rosto possui simetria média.  
+        • Linhas faciais sugerem corte curto com laterais baixas.  
+        • Sobrancelhas: manter alinhamento leve nas extremidades.  
+        • Olheiras: ajuste de iluminação + skincare leve recomendado.  
+        • Pontos fortes: estrutura da mandíbula + proporção da testa.  
+        • Sugestão: barba curta ou degradé para definição.  
+      `;
+    }
+
+    window.gerarAnalise = function () {
+
+      if (!base64Foto) {
+        alert("Envie uma foto primeiro!");
+        return;
+      }
+
+      const db = loadDB();
+      const userId = db.userId || "user";
+
+      const salvar = saveUpload(userId + "_analise", {
+        name: "analise.png",
+        data: base64Foto
+      });
+
+      if (salvar.error) {
+        alert("Erro ao salvar imagem da análise.");
+        return;
+      }
+
+      db.analiseFoto = salvar.path;
+      db.analiseTexto = gerarTextoFake();
+      sa
