@@ -1,0 +1,19 @@
+{
+  "appName": "LASY",
+  "version": "1.0.0",
+  "author": "Aristocrata",
+  "theme": {
+    "primary": "#0A66FF",
+    "secondary": "#111111",
+    "background": "#FFFFFF",
+    "text": "#000000"
+  },
+  "startupScreen": "screens/onboarding.html",
+  "permissions": [],
+  "offlineMode": true,
+  "cache": true,
+  "scripts": {
+    "navigation": "navigation.js",
+    "database": "database.js"
+  }
+}
