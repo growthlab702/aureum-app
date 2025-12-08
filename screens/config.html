@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configurações</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .box {
+      background: #f5f5f5;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+
+    .label {
+      font-weight: bold;
+    }
+
+    .value {
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+
+    .btn-danger {
+      background: #d9534f !important;
+      color: white !important;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Configurações</h1>
+
+  <div class="box">
+    <div class="label">Email:</div>
+    <div id="email" class="value"></div>
+
+    <div class="label">Status:</div>
+    <div id="status" class="value"></div>
+  </div>
+
+  <button onclick="logout()" class="btn-danger">Sair da Conta</button>
+  <br><br>
+  <button onclick="goTo('home')">Voltar</button>
+
+  <script type="module">
+    import { loadDB, saveDB } from "../database.js";
+    import { isPremium } from "../modules/premiumManager.js";
+    import { goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    function load() {
+      const db = loadDB();
+
+      document.getElementById("email").textContent = db.email || "Não definido";
+      document.getElementById("status").textContent =
+        isPremium() ? "Premium" : "Gratuito";
+    }
+
+    window.logout = () => {
+      localStorage.removeItem("db_lasy");
+      window.location.href = "../index.html";
+    };
+
+    load();
+  </script>
+
+</body>
+
+</html>
