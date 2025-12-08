@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Análise Facial</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .box {
+      background: #f4f4f4;
+      padding: 18px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+    }
+
+    #preview {
+      width: 100%;
+      max-width: 350px;
+      border-radius: 12px;
+      margin: 15px auto;
+      display: none;
+    }
+
+    .btn-upload {
+      padding: 12px;
+      background: #0a66ff;
+      color: white;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .analysis-box {
+      margin-top: 25px;
+      padding: 20px;
+      background: #e8f0ff;
+      border-radius: 15px;
+      display: none;
+    }
+
+    .btn-back {
+      margin-top: 25px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Análise Facial</h1>
+
+  <div class="box">
+    <div class="btn-upload" onclick="document.getElementById('file').click()">
+      Enviar Foto
+    </div>
+    <input id="file" type="file" accept="image/*" style="display:none">
+  </div>
+
+  <img id="preview">
+
+  <div id="analysis" class="analysis-box"></div>
+
+  <button onclick="goTo('home')" class="btn-back">Voltar</button>
+
+  <script type="module">
+    import { goTo } from "../navigation.js";
+    import { isPremium } from "../modules/premiumManager.js";
+
+    window.goTo = goTo;
+
+    const fileInput = document.getElementById("file");
+    const preview = document.getElementById("preview");
+    const analysis = document.getElementById("analysis");
+
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const url = URL.createObjectURL(file);
+
+      preview.src = url;
+      preview.style.display = "block";
+
+      gerarAnalise();
+    });
+
+    function gerarAnalise() {
+      analysis.style.display = "block";
+
+      if (!isPremium()) {
+        analysis.innerHTML = `
+          <h3>Resultado Limitado</h3>
+          <p>Para liberar análise completa, desbloqueie o Premium.</p>
+          <button onclick="goTo('premium')" style="margin-top:15px" class="btn">
+            🔒 Desbloquear Agora
+          </button>
+        `;
+        return;
+      }
+
+      analysis.innerHTML = `
+        <h3>Sua Análise Facial</h3>
+
+        <p><strong>• Formato do rosto:</strong> Análise baseada na imagem enviada.</p>
+        <p><strong>• Pontos fortes:</strong> Áreas com mais harmonia visual.</p>
+        <p><strong>• Oportunidades de melhoria:</strong> Sugestões personalizadas.</p>
+
+        <hr style="margin:15px 0">
+
+        <h3>Recomendações</h3>
+
+        <p><strong>Corte ideal:</strong> Estilos que favorecem o seu formato.</p>
+        <p><strong>Barba:</strong> Tipos que equilibram seu rosto.</p>
+        <p><strong>Sobrancelhas:</strong> Ajustes para maior simetria.</p>
+        <p><strong>Pele:</strong> Sugestões para reduzir olheiras, oleosidade e poros.</p>
+        <p><strong>Estilo:</strong> Acessórios e roupas que reforçam sua estética.</p>
+
+        <p style="margin-top:10px;">
+          <em>• Essa análise será aprimorada com IA real em breve.</em>
+        </p>
+      `;
+    }
+  </script>
+
+</body>
+
+</html>
