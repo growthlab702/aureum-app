@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AUREUM • Premium Ativado</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 15px;
+    }
+
+    p {
+      opacity: .7;
+      margin-bottom: 25px;
+    }
+
+    .btn {
+      background: #000;
+      color: #fff;
+      padding: 14px 22px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    .btn:hover {
+      opacity: .8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🎉 Premium Ativado</h1>
+  <p>Obrigado por entrar para o AUREUM. Todos os recursos foram liberados.</p>
+
+  <div class="btn" onclick="goTo('home')">Ir para o aplicativo</div>
+
+  <script type="module">
+    import { goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    // Marca o usuário como premium
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (user) {
+      user.premium = true;
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+
+    // Marca também no banco local, se existir
+    const db = JSON.parse(localStorage.getItem("db_lasy")) || {};
+    db.premium = true;
+    localStorage.setItem("db_lasy", JSON.stringify(db));
+  </script>
+
+</body>
+
+</html>
