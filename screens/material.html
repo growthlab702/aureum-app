@@ -10,48 +10,58 @@
 
   <style>
     body {
-      padding: 20px;
-      max-width: 900px;
+      padding: 25px;
+      max-width: 800px;
       margin: auto;
-      line-height: 1.6;
     }
 
     h1 {
-      margin-bottom: 18px;
+      margin-bottom: 15px;
       text-align: center;
-      font-size: 26px;
     }
 
-    #conteudo {
-      background: #ffffff;
-      padding: 18px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px #00000011;
-      margin-bottom: 25px;
-      white-space: pre-line;
-    }
-
-    .blocked {
-      text-align: center;
-      padding: 45px 20px;
-      font-size: 18px;
-      color: #333;
-    }
-
-    .btn-premium {
-      padding: 14px 22px;
-      font-size: 18px;
-      background: #0a66ff;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
+    .img-box {
       width: 100%;
-      margin-top: 15px;
-      cursor: pointer;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      overflow: hidden;
     }
 
-    .btn-voltar {
+    .img-box img {
+      width: 100%;
+      display: block;
+    }
+
+    .conteudo {
+      font-size: 17px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      background: #f4f4f4;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 12px;
+    }
+
+    .locked-box {
+      background: #ffe0e0;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 16px;
+      margin-top: 20px;
+      border: 2px solid #ff6a6a;
+    }
+
+    .locked-btn {
       margin-top: 15px;
+      background: #ff3b3b;
+      color: white;
+      padding: 12px;
+      border: none;
+      width: 100%;
+      border-radius: 12px;
+      font-size: 17px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -60,7 +70,20 @@
 
   <h1 id="titulo">Carregando...</h1>
 
-  <div id="conteudo">Carregando conteúdo...</div>
+  <div id="imagem" class="img-box" style="display:none;">
+    <img id="img" src="">
+  </div>
+
+  <div id="conteudo" class="conteudo" style="display:none;"></div>
+
+  <div id="locked" class="locked-box" style="display:none;">
+    Este material faz parte do <b>Plano Premium</b>.  
+    <br><br>
+    Desbloqueie todo o conteúdo estético avançado.
+    <button class="locked-btn" onclick="goTo('premium')">
+      Desbloquear Premium
+    </button>
+  </div>
 
   <button onclick="goTo('biblioteca')" class="btn-voltar">Voltar</button>
 
@@ -70,46 +93,38 @@
 
     window.goTo = goTo;
 
-    function render() {
-      const db = loadDB();
-      const id = db.materialAtual;
+    const db = loadDB();
 
-      const material = db.library.find(m => m.id === id);
+    const titulo = document.getElementById("titulo");
+    const imagem = document.getElementById("imagem");
+    const img = document.getElementById("img");
+    const conteudo = document.getElementById("conteudo");
+    const locked = document.getElementById("locked");
 
-      const titulo = document.getElementById("titulo");
-      const conteudo = document.getElementById("conteudo");
+    const materials = db.library || [];
+    const atual = materials.find(m => m.id === db.materialAtual);
 
-      if (!material) {
-        titulo.innerText = "Material não encontrado";
-        conteudo.innerHTML = "";
+    if (!atual) {
+      titulo.textContent = "Erro ao carregar conteúdo.";
+    } else {
+      titulo.textContent = atual.titulo;
+
+      // PREMIUM BLOQUEADO
+      if (atual.premium && !db.premium) {
+        locked.style.display = "block";
         return;
       }
 
-      titulo.innerText = material.titulo;
-
-      // 🔒 BLOQUEIO PREMIUM
-      if (material.premium && !db.premium) {
-        conteudo.innerHTML = `
-          <div class="blocked">
-            🔒 Este conteúdo é Premium
-            
-            <br><br>
-            Para desbloquear, adquira o acesso premium.
-            <br><br>
-
-            <button class="btn-premium" onclick="window.location.href='https://seu-checkout-aqui.com'">
-              Desbloquear Conteúdo
-            </button>
-          </div>
-        `;
-        return;
+      // EXIBE IMAGEM SE TIVER
+      if (atual.imagem) {
+        img.src = atual.imagem;
+        imagem.style.display = "block";
       }
 
-      // 🟢 MATERIAL LIBERADO
-      conteudo.innerHTML = material.conteudo.replace(/\n/g, "<br>");
+      // EXIBE TEXTO
+      conteudo.textContent = atual.texto || "Conteúdo vazio.";
+      conteudo.style.display = "block";
     }
-
-    render();
   </script>
 
 </body>
