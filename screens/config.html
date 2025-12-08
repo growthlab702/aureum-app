@@ -11,32 +11,45 @@
   <style>
     body {
       padding: 25px;
+      max-width: 700px;
+      margin: auto;
     }
 
     h1 {
-      margin-bottom: 20px;
+      margin-bottom: 25px;
       text-align: center;
     }
 
     .box {
-      background: #f5f5f5;
-      padding: 20px;
-      border-radius: 15px;
-      margin-bottom: 20px;
+      background: #f4f4f4;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .label {
-      font-weight: bold;
+    .badge {
+      padding: 5px 10px;
+      background: #0a66ff;
+      color: #fff;
+      border-radius: 6px;
+      font-size: 12px;
     }
 
-    .value {
-      margin-bottom: 12px;
-      font-size: 15px;
+    .premium {
+      background: #28a745 !important;
     }
 
-    .btn-danger {
-      background: #d9534f !important;
-      color: white !important;
+    .alert {
+      margin-top: 20px;
+      padding: 15px;
+      background: #ffe8a6;
+      border-left: 5px solid #ffb100;
+      border-radius: 10px;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -46,38 +59,71 @@
   <h1>Configurações</h1>
 
   <div class="box">
-    <div class="label">Email:</div>
-    <div id="email" class="value"></div>
-
-    <div class="label">Status:</div>
-    <div id="status" class="value"></div>
+    Status da conta:
+    <span id="status" class="badge">Carregando...</span>
   </div>
 
-  <button onclick="logout()" class="btn-danger">Sair da Conta</button>
-  <br><br>
-  <button onclick="goTo('home')">Voltar</button>
+  <div class="box" onclick="goTo('premium')">
+    Plano Premium
+    <span class="badge">Ver planos</span>
+  </div>
+
+  <div class="box" onclick="resetProgress()">
+    Redefinir Progresso
+    <span class="badge">Reset</span>
+  </div>
+
+  <div class="box" onclick="logout()">
+    Sair da Conta
+    <span class="badge">Logout</span>
+  </div>
+
+  <div class="alert">
+    Aqui você controla sua conta, progresso e assinatura.  
+    Tudo sincronizado e 100% seguro no seu dispositivo.
+  </div>
+
+  <button onclick="goTo('home')" class="btn-voltar">Voltar</button>
 
   <script type="module">
     import { loadDB, saveDB } from "../database.js";
-    import { isPremium } from "../modules/premiumManager.js";
     import { goTo } from "../navigation.js";
 
     window.goTo = goTo;
 
-    function load() {
-      const db = loadDB();
+    const db = loadDB();
+    const badge = document.getElementById("status");
 
-      document.getElementById("email").textContent = db.email || "Não definido";
-      document.getElementById("status").textContent =
-        isPremium() ? "Premium" : "Gratuito";
+    if (db.premium) {
+      badge.textContent = "Premium";
+      badge.classList.add("premium");
+    } else {
+      badge.textContent = "Gratuito";
     }
 
-    window.logout = () => {
-      localStorage.removeItem("db_lasy");
-      window.location.href = "../index.html";
+    window.resetProgress = function () {
+      if (!confirm("Deseja realmente resetar todo seu progresso?")) return;
+
+      const db2 = loadDB();
+
+      db2.diaAtual = 1;
+      db2.diasConcluidos = [];
+      db2.materialAtual = null;
+
+      saveDB(db2);
+
+      alert("Seu progresso foi resetado com sucesso!");
+      goTo("home");
     };
 
-    load();
+    window.logout = function () {
+      if (!confirm("Deseja realmente sair da sua conta?")) return;
+
+      localStorage.removeItem("db_lasy");
+
+      alert("Você saiu da conta.");
+      goTo("login");
+    };
   </script>
 
 </body>
