@@ -1,25 +1,37 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home</title>
+  <title>AUREUM – Home</title>
 
   <link rel="stylesheet" href="../style.css">
 
   <style>
     body {
-      padding: 25px;
+      padding: 28px;
+      background: #fafafa;
+      font-family: Arial, sans-serif;
     }
 
     h2 {
       text-align: center;
       margin-bottom: 25px;
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .progress-box {
+      background: #e9f1ff;
+      padding: 22px;
+      border-radius: 16px;
+      text-align: center;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     }
 
     .menu-item {
-      background: #f4f4f4;
+      background: white;
       padding: 18px;
       border-radius: 14px;
       margin-bottom: 15px;
@@ -29,10 +41,12 @@
       justify-content: space-between;
       align-items: center;
       transition: 0.2s;
+      border: 1px solid #e5e5e5;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
     .menu-item:hover {
-      background: #eaeaea;
+      transform: scale(1.01);
     }
 
     .premium-tag {
@@ -40,45 +54,43 @@
       padding: 5px 10px;
       border-radius: 10px;
       font-size: 13px;
-      color: black;
+      color: #1b1b1b;
       font-weight: bold;
-    }
-
-    .progress-box {
-      margin-bottom: 25px;
-      padding: 20px;
-      background: #e9f1ff;
-      border-radius: 14px;
-      text-align: center;
     }
 
     .btn-premium {
       background: #0a66ff;
       color: white;
-      padding: 15px;
-      border-radius: 12px;
+      padding: 18px;
+      border-radius: 14px;
       width: 100%;
       font-size: 18px;
-      margin-top: 20px;
+      margin-top: 25px;
       cursor: pointer;
       border: none;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .btn-premium:hover {
+      opacity: 0.9;
     }
   </style>
 </head>
 
 <body>
 
-  <h2>Bem-vindo!</h2>
+  <h2>Bem-vindo ao AUREUM</h2>
 
-  <!-- PROGRESSO 30 DIAS -->
+  <!-- PROGRESSO -->
   <div class="progress-box">
     <div id="progress-text">Carregando...</div>
-    <button onclick="goTo('progresso')" class="btn-premium" style="background:#0a66ff;">
+    <button onclick="goTo('transformacao')" class="btn-premium" style="background:#0a66ff;">
       Ver Progresso
     </button>
   </div>
 
-  <!-- MENU PRINCIPAL -->
+  <!-- MENU -->
   <div class="menu-item" onclick="goTo('analise')">
     Análise Facial (IA)
     <span class="premium-tag">Premium</span>
@@ -96,7 +108,7 @@
     Configurações
   </div>
 
-  <!-- BOTÃO PREMIUM SE AINDA NÃO COMPROU -->
+  <!-- BOTÃO PREMIUM -->
   <button id="btn-premium" class="btn-premium" onclick="goTo('premium')">
     🔒 Desbloquear Premium
   </button>
@@ -108,10 +120,10 @@
 
     window.goTo = goTo;
 
-    function load() {
+    function loadHome() {
       const db = loadDB();
 
-      // PROGRESSO 30 DIAS
+      // Contador do Projeto 30 Dias
       if (!db.startDate) {
         db.startDate = new Date().toISOString();
         saveDB(db);
@@ -120,20 +132,20 @@
       const start = new Date(db.startDate).getTime();
       const now = Date.now();
 
-      const diff = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-      const day = Math.min(diff + 1, 30);
+      const diff = Math.floor((now - start) / (1000*60*60*24));
+      const dia = Math.min(diff + 1, 30);
 
-      document.getElementById("progress-text").textContent =
-        `Você está no Dia ${day} do seu Projeto 30 Dias`;
+      document.getElementById("progress-text").innerText =
+        `Você está no Dia ${dia} do Projeto 30 Dias`;
 
-      // PREMIUM
-      const btn = document.getElementById("btn-premium");
-      if (isPremium()) btn.style.display = "none";
+      // Esconde botão premium caso já tenha comprado
+      if (isPremium()) {
+        document.getElementById("btn-premium").style.display = "none";
+      }
     }
 
-    load();
+    loadHome();
   </script>
 
 </body>
-
 </html>
