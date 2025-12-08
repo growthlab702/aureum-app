@@ -2,120 +2,165 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Desbloquear Premium</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUREUM – Premium</title>
 
   <link rel="stylesheet" href="../style.css">
 
   <style>
     body {
-      padding: 25px;
+      padding: 28px;
+      background: #fafafa;
+      font-family: Arial, sans-serif;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 15px;
+      margin-bottom: 25px;
+      font-size: 28px;
     }
 
-    .beneficios {
-      background: #f4f4f4;
-      padding: 20px;
-      border-radius: 15px;
-      margin-bottom: 20px;
-    }
-
-    .beneficios li {
-      margin-bottom: 10px;
+    .sub {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #444;
       font-size: 16px;
     }
 
-    .box-preco {
-      background: #fff;
-      border-radius: 14px;
+    .plan {
+      background: white;
+      border: 2px solid #d1d1d1;
       padding: 20px;
-      text-align: center;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 14px;
       margin-bottom: 20px;
+      cursor: pointer;
+      transition: 0.2s;
     }
 
-    .valor {
-      font-size: 28px;
+    .plan:hover {
+      transform: scale(1.02);
+    }
+
+    .plan.selected {
+      border-color: #0a66ff;
+      box-shadow: 0 0 10px rgba(10, 102, 255, 0.3);
+    }
+
+    .plan-title {
+      font-size: 20px;
       font-weight: bold;
-      margin-bottom: 10px;
-      color: #0a66ff;
+      margin-bottom: 8px;
     }
 
-    .btn-comprar {
+    .price {
+      font-size: 18px;
+      font-weight: bold;
+      color: #0a66ff;
+      margin-bottom: 10px;
+    }
+
+    .benefits {
+      font-size: 15px;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    .btn-pay {
       background: #0a66ff;
       color: white;
-      padding: 15px 20px;
-      border-radius: 12px;
       width: 100%;
-      font-size: 18px;
-      cursor: pointer;
+      padding: 18px;
+      border-radius: 12px;
       border: none;
-      margin-bottom: 10px;
+      font-size: 18px;
+      margin-top: 25px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-weight: bold;
+    }
+
+    .btn-pay:hover {
+      opacity: 0.9;
+    }
+
+    .voltar {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 16px;
+      cursor: pointer;
+      color: #0a66ff;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Desbloquear Premium</h1>
+  <h1>AUREUM Premium</h1>
+  <div class="sub">Desbloqueie todo o poder da sua evolução</div>
 
-  <div class="beneficios">
-    <ul>
-      <li>Acesso ilimitado a todo o conteúdo</li>
-      <li>Biblioteca completa liberada</li>
-      <li>Novos materiais todos os meses</li>
-      <li>Suporte prioritário</li>
-      <li>Progresso salvo na nuvem</li>
-    </ul>
+  <div id="planMensal" class="plan" onclick="selectPlan('mensal')">
+    <div class="plan-title">AUREUM Mensal</div>
+    <div class="price">R$ 39/mês</div>
+    <div class="benefits">
+      ✔ Acesso total ao AUREUM<br>
+      ✔ Análise Facial IA<br>
+      ✔ Biblioteca Premium<br>
+      ✔ Ferramentas Avançadas<br>
+      ✔ Chat IA ilimitado
+    </div>
   </div>
 
-  <div class="box-preco">
-    <div class="valor">R$ 29,90/mês</div>
-    <button class="btn-comprar" onclick="comprar('mensal')">
-      Assinar Mensal
-    </button>
-
-    <div class="valor">R$ 197,00/ano</div>
-    <button class="btn-comprar" onclick="comprar('anual')">
-      Assinar Anual
-    </button>
+  <div id="planAnual" class="plan" onclick="selectPlan('anual')">
+    <div class="plan-title">AUREUM Anual</div>
+    <div class="price">R$ 390/ano</div>
+    <div class="benefits">
+      ✔ Tudo do plano mensal<br>
+      ✔ 2 meses grátis (desconto automático)<br>
+      ✔ Acesso às Ferramentas Extras exclusivas
+    </div>
   </div>
 
-  <button onclick="goTo('home')" class="btn-voltar">Voltar</button>
+  <button class="btn-pay" onclick="finalizarPagamento()">
+    Continuar para o Pagamento
+  </button>
+
+  <div class="voltar" onclick="goTo('home')">Voltar</div>
 
   <script type="module">
     import { goTo } from "../navigation.js";
-    import { activatePremium } from "../modules/premiumManager.js";
+    import { setCheckoutPlan } from "../modules/premiumManager.js";
 
     window.goTo = goTo;
 
-    // Coloque aqui quando tiver o link de checkout real
-    const CHECKOUTS = {
-      mensal: "COLE_O_LINK_DO_CHECKOUT_MENSAL_AQUI",
-      anual: "COLE_O_LINK_DO_CHECKOUT_ANUAL_AQUI"
-    };
+    let selected = "mensal";
 
-    window.comprar = tipo => {
-      const url = CHECKOUTS[tipo];
+    function highlight() {
+      document.getElementById("planMensal").classList.remove("selected");
+      document.getElementById("planAnual").classList.remove("selected");
 
-      if (!url || url.includes("COLE_")) {
-        alert("⚠ Checkout ainda não configurado!");
-        return;
+      if (selected === "mensal") {
+        document.getElementById("planMensal").classList.add("selected");
+      } else {
+        document.getElementById("planAnual").classList.add("selected");
       }
+    }
 
-      window.location.href = url;
+    window.selectPlan = function (plan) {
+      selected = plan;
+      highlight();
     };
 
-    // Função que será chamada depois que você configurar
-    // o retorno do checkout (Kirvano, Kiwify, etc.)
-    window.activatePremium = activatePremium;
+    window.finalizarPagamento = function () {
+      // Salva o plano escolhido no banco interno
+      setCheckoutPlan(selected);
+
+      // Vai para a tela de redirecionamento
+      goTo("payment_redirect");
+    };
+
+    highlight();
   </script>
 
 </body>
-
 </html>
