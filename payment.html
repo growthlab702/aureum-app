@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AUREUM • Assinatura Premium</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    p.sub {
+      text-align: center;
+      margin-bottom: 30px;
+      opacity: 0.7;
+    }
+
+    .plan {
+      background: #ffffff;
+      border: 2px solid #d9d9d9;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    .plan h2 {
+      margin-bottom: 10px;
+    }
+
+    .price {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .btn {
+      width: 100%;
+      background: #000;
+      color: #fff;
+      padding: 14px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 18px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      opacity: .8;
+    }
+
+    .back {
+      margin-top: 25px;
+      text-align: center;
+      cursor: pointer;
+      color: #555;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>AUREUM Premium</h1>
+  <p class="sub">Desbloqueie todas as ferramentas e materiais</p>
+
+  <div id="plans"></div>
+
+  <div class="back" onclick="goTo('home')">Voltar</div>
+
+  <script type="module">
+    import { requireLogin, goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    const user = requireLogin();
+    if (!user) return;
+
+    // Se já é premium → volta para home
+    if (user.premium === true) {
+      goTo("home");
+    }
+
+    const plans = [
+      {
+        id: "monthly",
+        nome: "Plano Mensal",
+        preco: "R$ 29,90/mês",
+        descricao: "Acesso total ao AUREUM por 30 dias.",
+        checkout: "" // <-- cole seu link aqui depois
+      },
+      {
+        id: "annual",
+        nome: "Plano Anual",
+        preco: "R$ 249,90/ano",
+        descricao: "Acesso completo + ferramentas exclusivas.",
+        checkout: "" // <-- cole seu link aqui depois
+      }
+    ];
+
+    const container = document.getElementById("plans");
+
+    plans.forEach(pl => {
+      const div = document.createElement("div");
+      div.className = "plan";
+
+      div.innerHTML = `
+        <h2>${pl.nome}</h2>
+        <div class="price">${pl.preco}</div>
+        <p>${pl.descricao}</p>
+        <div class="btn" id="btn-${pl.id}">Assinar agora</div>
+      `;
+
+      container.appendChild(div);
+
+      document
+        .getElementById(`btn-${pl.id}`)
+        .onclick = () => {
+          if (!pl.checkout || pl.checkout.trim() === "") {
+            alert("Checkout ainda não configurado.");
+            return;
+          }
+          window.location.href = pl.checkout;
+        };
+    });
+  </script>
+
+</body>
+
+</html>
