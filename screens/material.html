@@ -11,111 +11,103 @@
   <style>
     body {
       padding: 20px;
+      max-width: 900px;
+      margin: auto;
+      line-height: 1.6;
     }
 
     h1 {
+      margin-bottom: 18px;
       text-align: center;
-      margin-bottom: 15px;
-    }
-
-    .box {
-      background: #fff;
-      padding: 20px;
-      border-radius: 14px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.06);
+      font-size: 26px;
     }
 
     #conteudo {
-      font-size: 16px;
-      line-height: 1.5;
+      background: #ffffff;
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #00000011;
+      margin-bottom: 25px;
       white-space: pre-line;
     }
 
-    .locked-msg {
-      background: #ffe8e8;
-      border: 1px solid #d9534f;
-      padding: 15px;
-      border-radius: 12px;
-      font-size: 15px;
+    .blocked {
       text-align: center;
-      margin-bottom: 20px;
+      padding: 45px 20px;
+      font-size: 18px;
+      color: #333;
     }
 
-    .btn-area {
-      margin-top: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .btn-premium {
+      padding: 14px 22px;
+      font-size: 18px;
+      background: #0a66ff;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      width: 100%;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+
+    .btn-voltar {
+      margin-top: 15px;
     }
   </style>
 </head>
 
 <body>
 
-  <h1 id="titulo">Material</h1>
+  <h1 id="titulo">Carregando...</h1>
 
-  <div id="bloqueado" class="locked-msg" style="display:none;">
-    Este material é <strong>premium</strong>.  
-    Desbloqueie para acessar tudo!
-    <br><br>
-    <button onclick="goTo('premium')" class="btn">Desbloquear Premium</button>
-  </div>
+  <div id="conteudo">Carregando conteúdo...</div>
 
-  <div id="box-conteudo" class="box" style="display:none;">
-    <div id="conteudo"></div>
-  </div>
-
-  <div class="btn-area">
-    <button onclick="marcarProgresso()" class="btn">Marcar como concluído</button>
-    <button onclick="goTo('biblioteca')" class="btn-voltar">Voltar</button>
-  </div>
+  <button onclick="goTo('biblioteca')" class="btn-voltar">Voltar</button>
 
   <script type="module">
-    import { loadDB, saveDB } from "../database.js";
-    import { isPremium } from "../modules/premiumManager.js";
+    import { loadDB } from "../database.js";
     import { goTo } from "../navigation.js";
 
     window.goTo = goTo;
 
-    const db = loadDB();
-    const id = db.materialAtual;
-
     function render() {
-      const materiais = db.library || [];
-      const mat = materiais.find(m => m.id === id);
-
-      if (!mat) {
-        document.getElementById("conteudo").innerText =
-          "Erro: material não encontrado.";
-        return;
-      }
-
-      document.getElementById("titulo").innerText = mat.titulo;
-
-      if (mat.premium && !isPremium()) {
-        document.getElementById("bloqueado").style.display = "block";
-        document.getElementById("box-conteudo").style.display = "none";
-        return;
-      }
-
-      document.getElementById("bloqueado").style.display = "none";
-      document.getElementById("box-conteudo").style.display = "block";
-
-      // Conteúdo do material
-      document.getElementById("conteudo").innerText = mat.conteudo || "Sem conteúdo.";
-    }
-
-    window.marcarProgresso = () => {
       const db = loadDB();
+      const id = db.materialAtual;
 
-      if (!db.progress) db.progress = {};
-      db.progress[id] = 100;
+      const material = db.library.find(m => m.id === id);
 
-      saveDB(db);
+      const titulo = document.getElementById("titulo");
+      const conteudo = document.getElementById("conteudo");
 
-      alert("✔ Progresso salvo!");
-    };
+      if (!material) {
+        titulo.innerText = "Material não encontrado";
+        conteudo.innerHTML = "";
+        return;
+      }
+
+      titulo.innerText = material.titulo;
+
+      // 🔒 BLOQUEIO PREMIUM
+      if (material.premium && !db.premium) {
+        conteudo.innerHTML = `
+          <div class="blocked">
+            🔒 Este conteúdo é Premium
+            
+            <br><br>
+            Para desbloquear, adquira o acesso premium.
+            <br><br>
+
+            <button class="btn-premium" onclick="window.location.href='https://seu-checkout-aqui.com'">
+              Desbloquear Conteúdo
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      // 🟢 MATERIAL LIBERADO
+      conteudo.innerHTML = material.conteudo.replace(/\n/g, "<br>");
+    }
 
     render();
   </script>
