@@ -4,31 +4,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dia</title>
 
+  <title>Dia Atual</title>
   <link rel="stylesheet" href="../style.css">
 
   <style>
     body {
       padding: 25px;
+      max-width: 700px;
+      margin: auto;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     .box {
       background: #f4f4f4;
-      padding: 20px;
+      padding: 18px;
       border-radius: 12px;
       margin-bottom: 20px;
-      line-height: 1.6;
     }
 
-    .btn-big {
+    button {
       width: 100%;
-      margin-top: 20px;
+      margin-top: 15px;
+    }
+
+    .done {
+      background: #d4ffd4;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
     }
   </style>
 </head>
@@ -37,66 +47,63 @@
 
   <h1 id="titulo"></h1>
 
-  <div id="conteudo" class="box"></div>
+  <div class="box" id="descricao"></div>
 
-  <button id="btnConcluir" class="btn-big">Concluir Dia</button>
-  <button onclick="goTo('cronograma')" class="btn-voltar">Voltar</button>
+  <button id="btnAbrir">Abrir Material Completo</button>
+  <button id="btnFinalizar" class="btn2">Marcar dia como concluído</button>
+
+  <div id="finalizado" class="done" style="display: none;">Dia concluído!</div>
+
+  <button onclick="goTo('home')" class="btn-voltar">Voltar</button>
 
   <script type="module">
-    import { loadDB } from "../database.js";
+    import { loadDB, saveDB } from "../database.js";
     import { goTo } from "../navigation.js";
 
     window.goTo = goTo;
 
-    const titulo = document.getElementById("titulo");
-    const conteudo = document.getElementById("conteudo");
-    const btnConcluir = document.getElementById("btnConcluir");
+    const db = loadDB();
 
-    function init() {
-      const db = loadDB();
-      const dia = db.diaAtual;
+    const dia = db.diaAtual;
 
-      if (!dia) {
-        goTo("cronograma");
-        return;
+    document.getElementById("titulo").innerText = "Dia " + dia;
+    document.getElementById("descricao").innerText =
+      db["dia" + dia]?.descricao || "Nenhuma descrição encontrada.";
+
+    const btnAbrir = document.getElementById("btnAbrir");
+    const btnFinalizar = document.getElementById("btnFinalizar");
+    const finalizado = document.getElementById("finalizado");
+
+    // abrir material
+    btnAbrir.onclick = () => {
+      db.materialAtual = "dia" + dia;
+      saveDB(db);
+      goTo("material");
+    };
+
+    // marcar como concluído
+    btnFinalizar.onclick = () => {
+      const db2 = loadDB();
+
+      if (!db2.diasConcluidos.includes(dia)) {
+        db2.diasConcluidos.push(dia);
       }
 
-      const item = db.cronograma.find(x => x.dia === dia);
-
-      if (!item) {
-        goTo("cronograma");
-        return;
+      if (db2.diaAtual < 30) {
+        db2.diaAtual++;
       }
 
-      titulo.textContent = `Dia ${dia}`;
-      conteudo.textContent = item.conteudo;
+      saveDB(db2);
 
-      if (item.status === "done") {
-        btnConcluir.innerText = "Dia Concluído ✔";
-        btnConcluir.disabled = true;
-        btnConcluir.style.opacity = "0.7";
-      }
+      finalizado.style.display = "block";
+      btnFinalizar.style.display = "none";
+    };
 
-      btnConcluir.onclick = () => concluirDia(dia);
+    // se já finalizou esse dia
+    if (db.diasConcluidos.includes(dia)) {
+      finalizado.style.display = "block";
+      btnFinalizar.style.display = "none";
     }
-
-    function concluirDia(dia) {
-      const db = loadDB();
-      const item = db.cronograma.find(x => x.dia === dia);
-
-      item.status = "done";
-
-      const proximo = db.cronograma.find(x => x.dia === dia + 1);
-      if (proximo && proximo.status === "locked") {
-        proximo.status = "open";
-      }
-
-      localStorage.setItem("db_lasy", JSON.stringify(db));
-
-      goTo("cronograma");
-    }
-
-    init();
   </script>
 
 </body>
