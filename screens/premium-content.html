@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conteúdo Premium</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      padding: 25px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1 {
+      margin-bottom: 18px;
+      text-align: center;
+      font-size: 26px;
+    }
+
+    #conteudo {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px #00000020;
+      white-space: pre-line;
+      margin-bottom: 30px;
+      line-height: 1.65;
+      font-size: 17px;
+    }
+
+    .blocked {
+      padding: 45px 15px;
+      text-align: center;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .btn-premium {
+      width: 100%;
+      padding: 14px 20px;
+      background: #0a66ff;
+      border: none;
+      color: white;
+      font-size: 18px;
+      border-radius: 12px;
+      margin-top: 25px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1 id="titulo">Conteúdo Premium</h1>
+
+  <div id="conteudo">Carregando...</div>
+
+  <button onclick="goTo('biblioteca')" class="btn-voltar">Voltar</button>
+
+  <script type="module">
+    import { loadDB } from "../database.js";
+    import { goTo } from "../navigation.js";
+
+    window.goTo = goTo;
+
+    function render() {
+      const db = loadDB();
+
+      const id = db.materialAtual;
+      const mat = db.library.find(m => m.id === id);
+
+      const titulo = document.getElementById("titulo");
+      const conteudo = document.getElementById("conteudo");
+
+      // material não encontrado
+      if (!mat) {
+        titulo.innerText = "Material não encontrado";
+        conteudo.innerHTML = "";
+        return;
+      }
+
+      titulo.innerText = mat.titulo;
+
+      // proteger material premium
+      if (!db.premium) {
+        conteudo.innerHTML = `
+          <div class="blocked">
+            🔒 Este conteúdo é exclusivo para membros Premium.
+
+            <br><br>
+
+            Para desbloquear, adquira o acesso Premium:
+            <br><br>
+
+            <button onclick="window.location.href='https://seu-checkout-aqui.com'"
+              class="btn-premium">Desbloquear Agora</button>
+          </div>
+        `;
+        return;
+      }
+
+      // conteúdo liberado
+      conteudo.innerHTML = mat.conteudo.replace(/\n/g, "<br>");
+    }
+
+    render();
+  </script>
+
+</body>
+
+</html>
