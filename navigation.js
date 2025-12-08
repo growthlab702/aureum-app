@@ -17,6 +17,7 @@ const routes = {
   analise: "/screens/analise.html",
   upload: "/screens/upload.html",
   perfil: "/screens/perfil.html",
+  success: "/screens/success.html",
 };
 
 // Guardar rota atual para evitar loops
