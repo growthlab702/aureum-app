@@ -2,9 +2,9 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Premium</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Desbloquear Premium</title>
 
   <link rel="stylesheet" href="../style.css">
 
@@ -15,104 +15,105 @@
 
     h1 {
       text-align: center;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
 
-    .sub {
-      text-align: center;
-      margin-bottom: 25px;
-      font-size: 16px;
-      color: #666;
-    }
-
-    .plan {
-      background: white;
-      padding: 18px;
-      border-radius: 12px;
+    .beneficios {
+      background: #f4f4f4;
+      padding: 20px;
+      border-radius: 15px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
-    .plan h2 {
-      margin-top: 0;
-    }
-
-    .price {
-      font-size: 22px;
-      font-weight: bold;
-      margin-top: 8px;
+    .beneficios li {
       margin-bottom: 10px;
+      font-size: 16px;
     }
 
-    .btn-primary {
-      width: 100%;
-      padding: 14px;
+    .box-preco {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .valor {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #0a66ff;
+    }
+
+    .btn-comprar {
       background: #0a66ff;
-      border-radius: 10px;
       color: white;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .btn-secondary {
+      padding: 15px 20px;
+      border-radius: 12px;
       width: 100%;
-      padding: 14px;
-      background: #ddd;
-      border-radius: 10px;
-      color: #333;
-      border: none;
-      font-size: 16px;
+      font-size: 18px;
       cursor: pointer;
-      margin-top: 20px;
+      border: none;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Assine o Premium</h1>
-  <p class="sub">Desbloqueie todos os materiais, ferramentas e o programa completo.</p>
+  <h1>Desbloquear Premium</h1>
 
-  <div class="plan">
-    <h2>Plano Mensal</h2>
-    <p class="price">R$ XX,XX / mês</p>
-    <button class="btn-primary" onclick="ComprarMensal()">Assinar Mensal</button>
+  <div class="beneficios">
+    <ul>
+      <li>Acesso ilimitado a todo o conteúdo</li>
+      <li>Biblioteca completa liberada</li>
+      <li>Novos materiais todos os meses</li>
+      <li>Suporte prioritário</li>
+      <li>Progresso salvo na nuvem</li>
+    </ul>
   </div>
 
-  <div class="plan">
-    <h2>Plano Anual</h2>
-    <p class="price">R$ XX,XX / ano</p>
-    <button class="btn-primary" onclick="ComprarAnual()">Assinar Anual</button>
+  <div class="box-preco">
+    <div class="valor">R$ 29,90/mês</div>
+    <button class="btn-comprar" onclick="comprar('mensal')">
+      Assinar Mensal
+    </button>
+
+    <div class="valor">R$ 197,00/ano</div>
+    <button class="btn-comprar" onclick="comprar('anual')">
+      Assinar Anual
+    </button>
   </div>
 
-  <button class="btn-secondary" onclick="goTo('home')">Voltar</button>
+  <button onclick="goTo('home')" class="btn-voltar">Voltar</button>
 
   <script type="module">
-    import { loadDB, saveDB } from "../database.js";
     import { goTo } from "../navigation.js";
+    import { activatePremium } from "../modules/premiumManager.js";
 
     window.goTo = goTo;
 
-    // 🔥 Coloque aqui os links do checkout da Kirvano quando criar
-    const LINK_MENSAL = "https://checkout-link-mensal";
-    const LINK_ANUAL = "https://checkout-link-anual";
-
-    window.ComprarMensal = function () {
-      window.location.href = LINK_MENSAL;
+    // Coloque aqui quando tiver o link de checkout real
+    const CHECKOUTS = {
+      mensal: "COLE_O_LINK_DO_CHECKOUT_MENSAL_AQUI",
+      anual: "COLE_O_LINK_DO_CHECKOUT_ANUAL_AQUI"
     };
 
-    window.ComprarAnual = function () {
-      window.location.href = LINK_ANUAL;
+    window.comprar = tipo => {
+      const url = CHECKOUTS[tipo];
+
+      if (!url || url.includes("COLE_")) {
+        alert("⚠ Checkout ainda não configurado!");
+        return;
+      }
+
+      window.location.href = url;
     };
 
-    // Função que ativa o premium quando o usuário voltar do checkout
-    export function ativarPremium() {
-      const db = loadDB();
-      db.premium = true;
-      saveDB(db);
-    }
+    // Função que será chamada depois que você configurar
+    // o retorno do checkout (Kirvano, Kiwify, etc.)
+    window.activatePremium = activatePremium;
   </script>
 
 </body>
