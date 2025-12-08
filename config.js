@@ -35,3 +35,10 @@ function aureumLog(message) {
 }
 
 aureumLog("Configurações carregadas com sucesso.");
+
+
+export async function loadConfigJSON() {
+    const response = await fetch("./config/config.json");
+    return await response.json();
+}
+
